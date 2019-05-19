@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style type="text/css">
+        header {
+         background-color: #106eda;
+        color:white;
+        padding: 10px;}
+        h1{ color: white; }
+    </style>
+</head>
+<body>
+    <header>
+    <h1>Simple Fishing Mapper</h1>
+    <p> author: Corinne Bassin, NOAA National Modeling Team</p>
+    <p> developed as part of the Spatial Economics Toolbox for Fisheries</p>
+    </header>
+    <h2>Simple Description<h2>
+    <h2>Using the Map</h2>
+    <h3>Data Files</h3>
+    <p> Two generated data files are expected and one configuration file
+        <ul> Data Files
+            <li> Gridded Data File -  This GeoJson file contains the grid that will be drawn on the map and used for spatial summaries of the data.  GeoJson files can be created from shapefiles if needed.  The GeoJson must contain a minimum of the coordinates that make up the polygons and  at least one property value that gives that polygon a unique Identifier.  That property value will be used to link the data in the CSV data file. Other properties may be in the GeoJson for informational purposes.</li>
+            <li> CSV Data File - The csv data file contains columns of variable where each row of data in unique.  Column variables may consist of numeric ( includng temporal)  or categorical data. One column variable included must cntain the ID to the polygon that row of data is associated to in the Gridded Data File.  The name does not need to be the same as it will need to be listed in the configuration file.
+            The starting location of the line</li>
+            <!-- need to change start and end to variables -->
+        </ul></p>
+    <h3> Configuaration</h3>
+    <p> The configurations file, map_config.js is a JSON of variables and filesnames necessary for the map to run.
+        <ul>
+            <li>mapbox_token - The is a private token that allow usage of the Mapbox base layers. Go to ...</li>
+            <li>choosen_scatter - the name of the variable in the csv file that </li>
+            <li>area_variable_column - the name of the variable in the csv data file that gives the unique ID associated to the polygon that data value is associated to</li>
+            <li>area_variable_map - the name of the property in the GeoJson file that identifies the polygon to cross reference to the CSV file</li>
+            <li>numeric_vars - a list of string varaibale ["","",""], which name all variables in the csv file that you would like to include for analysis on the map and are considered numeric</li>
+            <li>id_vars - a list of string varaibale ["","",""], which name all variables in the csv file that you would like to include for analysis on the map and are considered categorical variables or strings</li>
+            <li>grid_file - the name of the geojson file that contains the geographic infrmation associate to the gridfile</li>
+
+
+        </ul>
+
+
+    </p>
+    <button> <a href="./codeDocs/index.html">codde docs</a></button>
+
+
+</body>
+</html>
