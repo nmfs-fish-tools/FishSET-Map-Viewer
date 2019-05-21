@@ -18,6 +18,13 @@
     </header>
     <h2>Simple Description<h2>
     <h2>Using the Map</h2>
+    <h3>Set Up</h3>
+    <ul>
+        <li>Download or clone this project into a new directory "./newDir"</li>
+        <li>Create necessary data files, "Gridded Date File,"CSV Data File", "Config File"</li>
+        <li>Copy files into your folder "./newDir" </li>
+        <li>cd "./newDir" and start a localhost</li>
+    </ul>
     <h3>Data Files</h3>
     <p> Two generated data files are expected and one configuration file
         <ul> Data Files
@@ -25,11 +32,12 @@
             <li> CSV Data File - The csv data file contains columns of variable where each row of data in unique.  Column variables may consist of numeric ( includng temporal)  or categorical data. One column variable included must cntain the ID to the polygon that row of data is associated to in the Gridded Data File.  The name does not need to be the same as it will need to be listed in the configuration file.
             The starting location of the line</li>
             <!-- need to change start and end to variables -->
-        </ul></p>
-    <h3> Configuaration</h3>
+        </ul>
+    </p>
+    <h3> Configuaration File</h3>
     <p> The configurations file, map_config.js is a JSON of variables and filesnames necessary for the map to run.
         <ul>
-            <li>mapbox_token - The is a private token that allow usage of the Mapbox base layers. Go to ...</li>
+            <li>mapbox_token - The is a private token that allow usage of the Mapbox base layers. Go to <a href="www.mapbox.com" target="_blank" >Mapbox</a>  and create a free account for a token</li>
             <li>choosen_scatter - the name of the variable in the csv file that </li>
             <li>area_variable_column - the name of the variable in the csv data file that gives the unique ID associated to the polygon that data value is associated to</li>
             <li>area_variable_map - the name of the property in the GeoJson file that identifies the polygon to cross reference to the CSV file</li>
@@ -39,10 +47,43 @@
 
 
         </ul>
+        Example Config
+        <code>
+        {
+            "mapbox_token":"fakeTokenID",
+            "choosen_scatter":  "HAUL_FISHNAME1",
+            "area_variable_column": "THE_GRIDID",
+            "area_variable_map":"GRID_AREA",
+            "numeric_vars" :["HAUL_FISHNAME1","HAUL_FISHNAME2","HAUL_LBS_OTHER_LBS"],
+            "temporal_vars":["DATE_FISHING_BEGAN","DATE_LANDED"],
+            "id_vars": ["GEAR_TYPE","PERFORMANCE"],
+            "grid_file":"GriddedStatisticalAreas.json"
+        }
+        </code>
+
 
 
     </p>
+    <h3>Turning on a localhost</h3>
+    <p>You will need to create a localhost to serve the Javascript files.  This can be accomplised a number of ways. Here are two ways depending on if you have R or python on your computer</p>
+    <UL>
+        <li> using python3 and above, at the command line in the directory of choice <code>python -m http.server </code></li>
+        <li> using R: go to https://github.com/yihui/servr
+        <code>
+            install.packages('servr')
+
+            //in an interactive R session:
+            servr::httd()
+
+            //or at the cmd line
+
+             Rscript -e 'servr::httd()' -b
+        </code> </li>
+    </UL>
+    <p>
+    Devleopment Documentation
     <button> <a href="./codeDocs/index.html">Code Documentation</a></button>
+    </p>
 
 
 </body>
