@@ -4,7 +4,7 @@
 
 **************
 
-https://nmfs-general-modeling-tools/FishSET-Map-Viewer
+https://nmfs-general-modeling-tools.github.io/FishSET-Map-Viewer/
 
 **************
 
