@@ -14,7 +14,12 @@ function loadConfig(error, config, data){
     let id_vars =config['id_vars'];
     let time_vars = config['temporal_vars'];
     let layers = numeric_vars.concat(id_vars); //make this smarter to reduce by something
+    let longitude_start = config['longitude_start'];
+    let latitude_start = config['latitude_start'];
+    let longitude_end = config['longitude_end'];
+    let latitude_end = config['latitude_end'];
     let grid_file = config['grid_file'];
+    let uniqueID = config['uniqueID']
     let access_token = config['mapbox_token'];
 
     mapboxgl.accessToken = access_token;
@@ -57,7 +62,7 @@ function loadConfig(error, config, data){
     data.forEach(function(d){
 
        // scatterData.push(turf.lineString([[Number(d['LonLat_START_LON']),Number(d['LonLat_START_LAT'])],[Number(d['LonLat_END_LON']),Number(d['LonLat_END_LAT'])]], {UID: d['uniqueID'],'scatterValue':Number(d[choosen_scatter]),'scatterColor': quantileScaleScatter(Number(d[choosen_scatter]))}))
-        scatterData.push(turf.lineString([[Number(d['LonLat_START_LON']),Number(d['LonLat_START_LAT'])],[Number(d['LonLat_END_LON']),Number(d['LonLat_END_LAT'])]], {UID: d['uniqueID']},{id:d['uniqueID']}));
+        scatterData.push(turf.lineString([[Number(d[longitude_start]),Number(d[latitude_start])],[Number(d[longitude_end]),Number(d[latitude_end])]], {UID: d[uniqueID]},{id:d[uniqueID]}));
     })
     allScatterData =  turf.featureCollection(scatterData);
 
@@ -73,7 +78,7 @@ function loadConfig(error, config, data){
         })
 
     })
-    let scatterColor = setScatterColor(data, numeric_vars, choosen_scatter, scatterLegend);
+    let scatterColor = setScatterColor(data, numeric_vars, choosen_scatter, scatterLegend, uniqueID);
     // map.once('style.load', function(e) {
 
     makeTheMap(grid_file, allScatterData);
@@ -122,12 +127,12 @@ function loadConfig(error, config, data){
 
     // map.once('style.load', function(e) {
     let svgInfo = initLowerBarChart();
-    afterMapLoadsInit(data, choosen_scatter, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, area_variable_map)
+    afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, area_variable_map)
     // })
     // resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, map)
      // map.on('styledata', function(e){
     map.on('load', function(e){
-        scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend);
+        scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
 
         map.setPaintProperty('scatterLayer','line-color',['case',
               ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
@@ -237,7 +242,7 @@ function setZoneHist(choosen_scatter, drop_down_hist, area_set, quantileScaleHis
 * @param {object} scatterLegend - pointer to the legend for the scatter plot
 * @returns {object}  the object with colors for each line of the scatter plot
 */
-function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend){
+function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID){
 
 
     let scatterColor ={};
@@ -257,7 +262,7 @@ function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLe
                '#ae017e',
                 '#7a0177']);
         data.forEach(function(d) {
-            scatterColor[d['uniqueID']] = quantileScaleScatter(Number(d[choosen_scatter]));
+            scatterColor[d[uniqueID]] = quantileScaleScatter(Number(d[choosen_scatter]));
         });
 
         createLegend(quantileScaleScatter, scatterLegend);
@@ -281,7 +286,7 @@ function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLe
                '#ae017e',
                 '#7a0177']);
         data.forEach(function(d) {
-            scatterColor[d['uniqueID']] = ordinalScatter(d[choosen_scatter]);
+            scatterColor[d[uniqueID]] = ordinalScatter(d[choosen_scatter]);
         });
 
         createLegend(ordinalScatter, scatterLegend);
@@ -519,7 +524,7 @@ creates inital map view state after styles load from mapbox
 * @global {object} map
 
 **/
-function afterMapLoadsInit(data, choosen_scatter, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, area_variable_map){
+function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, area_variable_map){
 // after map loads
 
 
@@ -535,7 +540,7 @@ function afterMapLoadsInit(data, choosen_scatter, numeric_vars, id_vars, quantil
 
             choosen_scatter = prop.value;
 
-            let scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend);
+            let scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
 
             map.setPaintProperty('scatterLayer','line-color',['case',
                   ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],

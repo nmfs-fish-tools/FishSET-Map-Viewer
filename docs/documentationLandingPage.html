@@ -67,6 +67,12 @@
             <li>area_variable_map - the name of the property in the GeoJson file that identifies the polygon to cross reference to the CSV file</li>
             <li>numeric_vars - a list of string varaibale ["","",""], which name all variables in the csv file that you would like to include for analysis on the map and are considered numeric</li>
             <li>id_vars - a list of string varaibale ["","",""], which name all variables in the csv file that you would like to include for analysis on the map and are considered categorical variables or strings</li>
+
+            <li>longitude_start - the name of the variable in csv file that identifies the starting longitude  ( decimal degrees) of the line to plot </li>
+            <li>latitude_start - the name of the variable in csv file that identifies the starting latitude ( decimal degrees) of the line to plot</li>
+            <li>longitude_end - the name of the variable in csv file that identifies the ending longitude  ( decimal degrees) of the line to plot</li>
+            <li>latitude-end - the name of the variable in csv file that identifies the ending latitude ( decimal degrees) of the line to plot</li>
+            <li>uniqueID - the name of the variable in the CSV file that identifies a unique identification ( decimal degrees) to the row of the data. Essentially a row identifier</li>
             <li>grid_file - the name of the geojson file that contains the geographic infrmation associate to the gridfile</li>
 
 
@@ -82,6 +88,11 @@
             "numeric_vars" :["HAUL_FISHNAME1","HAUL_FISHNAME2","HAUL_LBS_OTHER_LBS"],
             "temporal_vars":["DATE_FISHING_BEGAN","DATE_LANDED"],
             "id_vars": ["GEAR_TYPE","PERFORMANCE"],
+            "longitude_start":"START_LON",
+            "latitude_start":"START_LAT",
+            "longitude_end":"END_LON",
+            "latitude_end":"END_LAT",
+            "uniqueID":"uniqueID",
             "grid_file":"GriddedStatisticalAreas.json"
         }
         </code>
