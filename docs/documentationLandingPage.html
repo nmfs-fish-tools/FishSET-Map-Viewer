@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,15 +30,15 @@
         <pre>
         The two dropdown menus on the left panel control which
         (a) variable is coloring the lines showns and
-        (b) the method for summaring the variable by grid.
+        (b) the method for sumarizing the variable by grid.
 
         The legend for each dropdown menu is dependant on the choices in the dropdowns and the colors are changed on the map and the lower bar graph accordingly.
-        the second dropdown (b) controls the bargraph and the grid.
+        the second dropdown (b) controls the bar graph and the grid.
         </pre>
         <li class ="title"> Hover Options</li>
-        Hovering over the linear features will bring up the row wise data associated to the specific line, and shown as a json in the right panel.  The line will become larger and darker for identification.
+        Hovering over the linear features will bring up the row-wise data associated with the specific line, and shown as a JSON in the right panel.  The line will become larger and darker for identification.
         <li class ="title" > Mouse Click</li>
-        Clicking on individaul zones will bring up a popup with any information associated to the propoerties of the polygon in the GeoJson which was used to create the grid.
+        Clicking on individual zones will bring up a popup with any information associated with the properties of the polygon in the GeoJson which was used to create the grid.
 
 
 
@@ -52,10 +53,10 @@
     <h3>Data Files</h3>
     <p> Two generated data files are expected and one configuration file
         <ul>
-            <li class ="title"> Gridded Data File</li> This GeoJson file contains the grid that will be drawn on the map and used for spatial summaries of the data.  GeoJson files can be created from shapefiles if needed.  The GeoJson must contain a minimum of the coordinates that make up the polygons and  at least one property value that gives that polygon a unique Identifier.  That property value will be used to link the data in the CSV data file. Other properties may be in the GeoJson for informational purposes.
+            <li class ="title"> Gridded Data File</li> This GeoJson file contains the grid that will be drawn on the map and used for spatial summaries of the data.  GeoJson files can be created from shapefiles if needed.  The GeoJson must contain a minimum of the coordinates that make up the polygons and at least one property value that gives that polygon a unique Identifier.  That property value will be used to link the data in the CSV data file. Other properties may be in the GeoJson for informational purposes.
             The filename will be stored in the map_config.json as "grid_file"
-            <li class ="title"> CSV Data File</li> The csv data file contains columns of variable where each row of data in unique.  Column variables may consist of numeric ( includng temporal)  or categorical data. One column variable included must cntain the ID to the polygon that row of data is associated to in the Gridded Data File.  The name does not need to be the same as it will need to be listed in the configuration file.
-            The filename for this csv file should be datafile.csv .  If you would like to change this, you can cahve the filename directly in the the index.html file but unless necessary just use a file with the standard name.
+            <li class ="title"> CSV Data File</li> The CSV data file contains columns of variable where each row of data in unique.  Column variables may consist of numeric ( including temporal)  or categorical data. One column variable included must contain the ID to the polygon that row of data is associated with in the Gridded Data File.  The name does not need to be the same as it will need to be listed in the configuration file.
+            The filename for this CSV file should be datafile.csv.  If you would like to change this, you can have the filename directly in the index.html file but unless necessary just use a file with the standard name.
 
             <!-- need to change start and end to variables -->
         </ul>
