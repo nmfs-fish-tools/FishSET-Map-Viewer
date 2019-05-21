@@ -17,14 +17,23 @@
     <h1>Simple Fishing Mapper</h1>
     <p> author: Corinne Bassin, NOAA National Modeling Team</p>
     <p> developed as part of the Spatial Economics Toolbox for Fisheries</p>
+    <p>
+    Devleopment Documentation
+    <button> <a href="./codeDocs/index.html">Code Documentation</a></button>
+    </p>
     </header>
     <h2>Simple Description<h2>
     <h2>Using the Map</h2>
      <ul>
         <li class ="title">Dropdown Menus</li>
-        The two dropdown menus on the left panel control which (a) variable is coloring the lines showns and (b) the method for summaring the variable by grid.
+        <pre>
+        The two dropdown menus on the left panel control which
+        (a) variable is coloring the lines showns and
+        (b) the method for summaring the variable by grid.
+
         The legend for each dropdown menu is dependant on the choices in the dropdowns and the colors are changed on the map and the lower bar graph accordingly.
-        the (b) second dropdown controls the bargraph and the grid.
+        the second dropdown (b) controls the bargraph and the grid.
+        </pre>
         <li class ="title"> Hover Options</li>
         Hovering over the linear features will bring up the row wise data associated to the specific line, and shown as a json in the right panel.  The line will become larger and darker for identification.
         <li class ="title" > Mouse Click</li>
@@ -38,7 +47,7 @@
         <li>Download or clone this project into a new directory "./newDir"</li>
         <li>Create necessary data files, "Gridded Date File,"CSV Data File", "Config File"</li>
         <li>Copy files into your folder "./newDir" </li>
-        <li>cd "./newDir" and start a localhost</li>
+        <li>cd "./newDir" and start a <a href="#localhost">localhost</a></li>
     </ul>
     <h3>Data Files</h3>
     <p> Two generated data files are expected and one configuration file
@@ -49,7 +58,7 @@
             <!-- need to change start and end to variables -->
         </ul>
     </p>
-    <h3> Configuaration File</h3>
+    <h3> Configuration File</h3>
     <p> The configurations file, map_config.js is a JSON of variables and filesnames necessary for the map to run.
         <ul>
             <li>mapbox_token - The is a private token that allow usage of the Mapbox base layers. Go to <a href="www.mapbox.com" target="_blank" >Mapbox</a>  and create a free account for a token</li>
@@ -81,7 +90,7 @@
 
 
     </p>
-    <h3>Turning on a localhost</h3>
+    <h3><a name="localhost"></a> Turning on a localhost</h3>
     <p>You will need to create a localhost to serve the Javascript files.  This can be accomplised a number of ways. Here are two ways depending on if you have R or python on your computer</p>
     <UL>
         <li> using python3 and above, at the command line in the directory of choice
@@ -105,10 +114,7 @@
         </pre>
          </li>
     </UL>
-    <p>
-    Devleopment Documentation
-    <button> <a href="./codeDocs/index.html">Code Documentation</a></button>
-    </p>
+
 
 
 </body>
