@@ -1,3 +1,5 @@
+//  to build docs.  documentation build ./d3-drawing-functions.js -f html -o docs/codeDocs
+
 /**
  *loads elements of the config file and parses, then runs all major functions
  *@param {object } error - returned from queue
@@ -240,6 +242,7 @@ function setZoneHist(choosen_scatter, drop_down_hist, area_set, quantileScaleHis
 * @param {object} id_vars - array of strings of the variables names that are categorical variables in the dataset
 * @param {string} choosen_scatter - the variable that is being plotted as scatter
 * @param {object} scatterLegend - pointer to the legend for the scatter plot
+* @param {string} uniqueID - the variable name pointing to the row id
 * @returns {object}  the object with colors for each line of the scatter plot
 */
 function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID){
@@ -514,6 +517,7 @@ function makeTheMap(grid_file, allScatterData){
 creates inital map view state after styles load from mapbox
 * @param {object} data
 * @param {string} choosen_scatter - the variable that is being plotted as scatter
+* @param {string} uniqueID - the string name of the variable representing the row ID for csv data
 * @param {object} numeric_vars
 * @param {object} id_vars
 * @param {object} quantileScaleHist - d3.scaleQuantile object
