@@ -8,8 +8,8 @@
         color:white;
         padding: 10px;}
         h1{ color: white; }
-        li {font-weight: bold}
-        .list{ list-style: numeric; }
+        .title {font-weight: bold;}
+        .list{ list-style-type: lower-alpha;  }
     </style>
 </head>
 <body>
@@ -21,13 +21,13 @@
     <h2>Simple Description<h2>
     <h2>Using the Map</h2>
      <ul>
-        <li>Dropdown Menus</li>
+        <li class ="title">Dropdown Menus</li>
         The two dropdown menus on the left panel control which (a) variable is coloring the lines showns and (b) the method for summaring the variable by grid.
         The legend for each dropdown menu is dependant on the choices in the dropdowns and the colors are changed on the map and the lower bar graph accordingly.
         the (b) second dropdown controls the bargraph and the grid.
-        <li> Hover Options</li>
+        <li class ="title"> Hover Options</li>
         Hovering over the linear features will bring up the row wise data associated to the specific line, and shown as a json in the right panel.  The line will become larger and darker for identification.
-        <li> Mouse Click</li>
+        <li class ="title" > Mouse Click</li>
         Clicking on individaul zones will bring up a popup with any information associated to the propoerties of the polygon in the GeoJson which was used to create the grid.
 
 
@@ -42,10 +42,10 @@
     </ul>
     <h3>Data Files</h3>
     <p> Two generated data files are expected and one configuration file
-        <ul> Data Files
-            <li> Gridded Data File -  This GeoJson file contains the grid that will be drawn on the map and used for spatial summaries of the data.  GeoJson files can be created from shapefiles if needed.  The GeoJson must contain a minimum of the coordinates that make up the polygons and  at least one property value that gives that polygon a unique Identifier.  That property value will be used to link the data in the CSV data file. Other properties may be in the GeoJson for informational purposes.</li>
-            <li> CSV Data File - The csv data file contains columns of variable where each row of data in unique.  Column variables may consist of numeric ( includng temporal)  or categorical data. One column variable included must cntain the ID to the polygon that row of data is associated to in the Gridded Data File.  The name does not need to be the same as it will need to be listed in the configuration file.
-            The starting location of the line</li>
+        <ul>
+            <li class ="title"> Gridded Data File</li> This GeoJson file contains the grid that will be drawn on the map and used for spatial summaries of the data.  GeoJson files can be created from shapefiles if needed.  The GeoJson must contain a minimum of the coordinates that make up the polygons and  at least one property value that gives that polygon a unique Identifier.  That property value will be used to link the data in the CSV data file. Other properties may be in the GeoJson for informational purposes.
+            <li class ="title"> CSV Data File</li> The csv data file contains columns of variable where each row of data in unique.  Column variables may consist of numeric ( includng temporal)  or categorical data. One column variable included must cntain the ID to the polygon that row of data is associated to in the Gridded Data File.  The name does not need to be the same as it will need to be listed in the configuration file.
+            The starting location of the line
             <!-- need to change start and end to variables -->
         </ul>
     </p>
@@ -84,8 +84,14 @@
     <h3>Turning on a localhost</h3>
     <p>You will need to create a localhost to serve the Javascript files.  This can be accomplised a number of ways. Here are two ways depending on if you have R or python on your computer</p>
     <UL>
-        <li> using python3 and above, at the command line in the directory of choice <code>python -m http.server </code></li>
+        <li> using python3 and above, at the command line in the directory of choice
+        <pre>
+         <code>python -m http.server </code>
+        </pre>
+        </li>
         <li> using R: go to https://github.com/yihui/servr
+        </li>
+        <pre>
         <code>
             install.packages('servr')
 
@@ -95,7 +101,9 @@
             //or at the cmd line
 
              Rscript -e 'servr::httd()' -b
-        </code> </li>
+        </code>
+        </pre>
+         </li>
     </UL>
     <p>
     Devleopment Documentation
