@@ -9,7 +9,7 @@ https://nmfs-general-modeling-tools.github.io/FishSET-Map-Viewer/
 **************
 
 ## This is a repository for the Mapping Tool: FishSET-Map-Viewer
-- A tool created as part of the Spatial Economics Toolbox for Fishereies
+- A tool created as part of the Spatial Economics Toolbox for Fisheries
 
 
 ## Disclaimer
