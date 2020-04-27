@@ -25,6 +25,7 @@ function loadConfig(error, config, data){
     let access_token = config['mapbox_token'];
 
     let multi_grid = config['multi_grid'];
+    let maps_available = multi_grid.map(a=>{return a['mapfile']});
 
     mapboxgl.accessToken = access_token;
     map = new mapboxgl.Map({
@@ -35,6 +36,18 @@ function loadConfig(error, config, data){
     });
 
 
+    //create map drop downs:
+    let mapdrop = document.getElementById('grid');
+    mapdrop.length = 0;
+    mapdrop.selectedIndex = 0;
+
+    let map_option;
+    for (let i = 0; i < maps_available.length; i++) {
+      map_option = document.createElement('option');
+      map_option.text = maps_available[i];
+      map_option.value = maps_available[i];
+      mapdrop.add(map_option);
+    }
 
 
     //create dropdowns for all column variables
