@@ -24,6 +24,8 @@ function loadConfig(error, config, data){
     let uniqueID = config['uniqueID']
     let access_token = config['mapbox_token'];
 
+    let multi_grid = config['multi_grid'];
+
     mapboxgl.accessToken = access_token;
     map = new mapboxgl.Map({
         container: 'map',
@@ -63,7 +65,6 @@ function loadConfig(error, config, data){
 
     data.forEach(function(d){
 
-       // scatterData.push(turf.lineString([[Number(d['LonLat_START_LON']),Number(d['LonLat_START_LAT'])],[Number(d['LonLat_END_LON']),Number(d['LonLat_END_LAT'])]], {UID: d['uniqueID'],'scatterValue':Number(d[choosen_scatter]),'scatterColor': quantileScaleScatter(Number(d[choosen_scatter]))}))
         scatterData.push(turf.lineString([[Number(d[longitude_start]),Number(d[latitude_start])],[Number(d[longitude_end]),Number(d[latitude_end])]], {UID: Number(d[uniqueID])},{id:Number(d[uniqueID])}));
     })
     allScatterData =  turf.featureCollection(scatterData);
@@ -83,7 +84,8 @@ function loadConfig(error, config, data){
     let scatterColor = setScatterColor(data, numeric_vars, choosen_scatter, scatterLegend, uniqueID);
     // map.once('style.load', function(e) {
 
-    makeTheMap(grid_file, allScatterData);
+    // makeTheMap(grid_file, allScatterData);
+    makeTheMap(multi_grid, allScatterData);
 
     map.on("mousemove", "scatterLayer", function(e) {
             var scatter_left_info;
@@ -383,73 +385,60 @@ function createDropDownGridInit(choosen_scatter, numeric_vars, area_set, quantil
         }
 }
 
-/**
-set up the map with inital data, use basic colors for faster loading
-@param {string} grid_file - the filename that contains the geojson grid file
-@param {object} allScatterData -
-@global {object} map
-*/
-function makeTheMap(grid_file, allScatterData){
 
-
-    map.on('load', function () {
-        map.addSource('statsArea', {
+function create_source_draw_grid(gridLayer, gridinfo){
+    map.addSource(gridLayer, {
             'type': 'geojson',
-             'data':grid_file,
+             'data':gridinfo['mapfile'],
              'tolerance':1.0,
              'buffer':0
         });
 
-        // map.addSource('statsArea', {
-
-        //           "type": "vector",
-        //           "tiles": ["http://localhost:8080/data/Groundfish_Statistical_Areas_2001/{z}/{x}/{y}.pbf"],
-        //           'minzoom': 1,
-        //             'maxzoom': 17
-
-
-        // });
 
         map.addLayer({
-            "id":'GridLayer',
+            "id":gridLayer,
             "type":"fill",
-            "source":'statsArea',
-            // "source-layer":'Groundfish_Statistical_Areas_2001',
+            "source":gridLayer,
             "layout": {},
             "paint": {
                 "fill-outline-color": "rgba(100,100,100,1)",
-                "fill-color": "rgba(1,1,1,0.1)"
+                // "fill-color": "rgba(1,1,1,0.1)"
+                "fill-color": "red"
             }
 
 
         });
 
         map.addLayer({
-            "id":'GridLayerColor',
+            "id": gridLayer + 'Color',
             "type":"fill",
-            "source":'statsArea',
-            // "source-layer":'Groundfish_Statistical_Areas_2001',
+            "source":gridLayer,
             "layout": {},
             "paint": {
                 "fill-outline-color": "rgba(1,1,1,0)",
                 "fill-color":"transparent",
-                // "fill-color": //["get",["to-string", ["get", "OBJECTID"]], ["literal", zoneColor]]
-                //     ['case',
-                //       ['has',['to-string', ['get', 'NMFS_AREA']],['literal',zoneHistColor]],
-                //       [ 'get',['to-string', ['get', 'NMFS_AREA']],['literal', zoneHistColor]],
-                //       "rgba(1,1,1,0)"
-                //     ],
-                // "fill-opacity": ["case",
-                //     ["boolean", ["feature-state", "hover"], false],
-                //     1,
-                //     0.5
-                // ]
                 "fill-opacity": 0.8,
 
             }
 
 
         });
+
+}
+
+/**
+set up the map with inital data, use basic colors for faster loading
+@param {string} grid_file - the filename that contains the geojson grid file
+@param {object} allScatterData -
+@global {object} map
+*/
+function makeTheMap(multi_grid, allScatterData){
+
+
+    map.on('load', function () {
+        multi_grid.forEach((e, i) => {
+            create_source_draw_grid('gridLayer'+String(i), e)
+        })
 
         map.addSource('10m-bathymetry-81bsvj', {
             type: 'vector',
@@ -479,34 +468,6 @@ function makeTheMap(grid_file, allScatterData){
         }, 'barrier_line-land-polygon');
 
 
-            // map.addSource('scatterLayer', {
-
-            //       "type": "vector",
-            //       "tiles": ["http://localhost:8080/data/scatter/{z}/{x}/{y}.pbf"],
-            //       'minzoom': 1,
-            //         'maxzoom': 17
-            //     })
-            // map.addLayer({
-            //     'id': 'scatterLayer',
-            //     'type': 'line',
-            //     'source': 'scatterLayer',
-            //     'source-layer':'scatterLayer',
-            //     "layout": {
-            //         "line-cap": "square"
-            //     },
-            //     'paint': {
-            //         'line-color':'white',
-            //         "line-width": ["case",
-            //         ["boolean", ["feature-state", "hover"], false],
-            //         5,
-            //         0.5
-            //         ]
-            //            }
-            //     // },
-            //     //  'tolerance':1.0,
-            //     //  'buffer':0
-            // });
-
             map.addLayer({
                 'id': 'scatterLayer',
                 'type': 'line',
@@ -519,14 +480,6 @@ function makeTheMap(grid_file, allScatterData){
                 },
                 'paint': {
                     'line-color':'white',
-                     // 'line-color':
-                     //     ['get', 'scatterColor']
-                    //  'line-color':
-                    //  ['case',
-                    //   ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
-                    //   [ 'get',['to-string', ['get', 'UID']],['literal', scatterColor]],
-                    //   "rgba(1,1,1,0)"
-                    // ],
                     "line-width": ["case",
                     ["boolean", ["feature-state", "hover"], false],
                     5,
