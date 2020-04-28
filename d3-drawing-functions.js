@@ -145,7 +145,7 @@ function loadConfig(error, config, data){
 
     // map.once('style.load', function(e) {
     let svgInfo = initLowerBarChart();
-    afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, area_variable_map)
+    afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid)
     // })
     // resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, map)
      // map.on('styledata', function(e){
@@ -546,14 +546,16 @@ creates inital map view state after styles load from mapbox
 * @global {object} map
 
 **/
-function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, area_variable_map){
+function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid){
 // after map loads
         let mapdrop = document.getElementById('grid');
-        mapdrop.addEventListener('change', function(){
-               let choosen_map = mapdrop.selectedIndex;
 
-            for(let i = 0; i < mapdrop.length; i++) {
-                if (i == choosen_map){
+        area_variable_map = multi_grid[0]['area_variable_map'];// for inital load use first grid only
+
+        mapdrop.addEventListener('change', function(){
+
+            for(let i = 0; i < this.length; i++) {
+                if (i == this.selectedIndex){
                     map.setLayoutProperty('gridLayer' + String(i), 'visibility', 'visible');
                     map.setLayoutProperty('gridLayer' + String(i)+'Color', 'visibility', 'visible');
                 } else{
