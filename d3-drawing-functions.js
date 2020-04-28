@@ -151,8 +151,9 @@ function loadConfig(error, config, data){
      // map.on('styledata', function(e){
     map.on('load', function(e){
         //turn on grid visibility to inital grid
-        map.setLayoutProperty('gridLayer' + String(0), 'visibility', 'visible');
-        map.setLayoutProperty('gridLayer' + String(0)+'Color', 'visibility', 'visible');
+        gridLayerChoice ='gridLayer' + String(0)
+        map.setLayoutProperty(gridLayerChoice, 'visibility', 'visible');
+        map.setLayoutProperty(gridLayerChoice+'Color', 'visibility', 'visible');
 
 
         scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
