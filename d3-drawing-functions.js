@@ -50,6 +50,7 @@ function loadConfig(error, config, data){
     }
 
 
+
     //create dropdowns for all column variables
     let dropdown = document.getElementById('prop');
     dropdown.length = 0;
@@ -412,11 +413,12 @@ function create_source_draw_grid(gridLayer, gridinfo){
             "id":gridLayer,
             "type":"fill",
             "source":gridLayer,
-            "layout": {},
+            "layout": {
+                "visibility":"none"
+            },
             "paint": {
                 "fill-outline-color": "rgba(100,100,100,1)",
                 // "fill-color": "rgba(1,1,1,0.1)"
-                "fill-color": "red"
             }
 
 
@@ -426,7 +428,9 @@ function create_source_draw_grid(gridLayer, gridinfo){
             "id": gridLayer + 'Color',
             "type":"fill",
             "source":gridLayer,
-            "layout": {},
+            "layout": {
+                "visibility":"none"
+            },
             "paint": {
                 "fill-outline-color": "rgba(1,1,1,0)",
                 "fill-color":"transparent",
@@ -537,7 +541,22 @@ creates inital map view state after styles load from mapbox
 **/
 function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, area_variable_map){
 // after map loads
+        let mapdrop = document.getElementById('grid');
+        mapdrop.addEventListener('change', function(){
+               let choosen_map = mapdrop.selectedIndex;
 
+            for(let i = 0; i < mapdrop.length; i++) {
+                if (i == choosen_map){
+                    map.setLayoutProperty('gridLayer' + String(i), 'visibility', 'visible');
+                    map.setLayoutProperty('gridLayer' + String(i)+'Color', 'visibility', 'visible');
+                } else{
+                    map.setLayoutProperty('gridLayer' + String(i), 'visibility', 'none');
+                    map.setLayoutProperty('gridLayer' + String(i)+'Color', 'visibility', 'none');
+                }
+            }
+
+
+        })
 
         let gridHist = document.getElementById('gridType');
 
@@ -564,6 +583,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
 
 
         })
+
 
 
 
