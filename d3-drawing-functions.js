@@ -164,7 +164,7 @@ function loadConfig(error, config, data){
               "rgba(1,1,1,0)"
             ]
         )
-    createDropDownGridInit(choosen_scatter, numeric_vars, area_set, quantileScaleHist, zoneLegend, svgInfo, map);
+    createDropDownGridInit(choosen_scatter, numeric_vars);
     resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
     })
 
@@ -376,7 +376,7 @@ function createGridDropDownCallback(choosen_scatter, area_set, quantileScaleHist
     });
 }
 
-function createDropDownGridInit(choosen_scatter, numeric_vars, area_set, quantileScaleHist, zoneLegend, svgInfo){
+function createDropDownGridInit(choosen_scatter, numeric_vars){
     let dropdown = document.getElementById('gridType');
         dropdown.length = 0; //reset menu
         // dropdown.selectedIndex =0;
@@ -585,7 +585,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
                   "rgba(1,1,1,0)"
                 ]
             )
-            createDropDownGridInit(choosen_scatter, numeric_vars, area_set, quantileScaleHist, zoneLegend, svgInfo);
+            createDropDownGridInit(choosen_scatter, numeric_vars);
             resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
 
 
