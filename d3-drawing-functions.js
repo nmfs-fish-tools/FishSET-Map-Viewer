@@ -151,9 +151,9 @@ function loadConfig(error, config, data){
      // map.on('styledata', function(e){
     map.on('load', function(e){
         //turn on grid visibility to inital grid
-        gridLayerChoice ='gridLayer' + String(0)
-        map.setLayoutProperty(gridLayerChoice, 'visibility', 'visible');
-        map.setLayoutProperty(gridLayerChoice+'Color', 'visibility', 'visible');
+        let maplayer ='gridLayer' + String(0)
+        map.setLayoutProperty(maplayer, 'visibility', 'visible');
+        map.setLayoutProperty(maplayer+'Color', 'visibility', 'visible');
 
 
         scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
@@ -165,7 +165,7 @@ function loadConfig(error, config, data){
             ]
         )
     createDropDownGridInit(choosen_scatter, numeric_vars);
-    resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
+    resetzones(maplayer, choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
     })
 
 
@@ -336,14 +336,14 @@ sets the colors of the zonal histograms and the associated barchart and legend
 * @global {object} map
 
 **/
-function resetzones(choosen_scatter, choosen_grid_hist, area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map){
+function resetzones(maplayer, choosen_scatter, choosen_grid_hist, area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map){
 
 
         zoneHistColor = setZoneHist(choosen_scatter, choosen_grid_hist, area_set, quantileScaleHist, zoneLegend);
 
         createLowerBarChart(quantileScaleHist,svgInfo);
 
-        map.setPaintProperty('GridLayerColor',
+        map.setPaintProperty(maplayer + 'Color',
             "fill-color",//["get",["to-string", ["get", "OBJECTID"]], ["literal", zoneColor]]
                 ['case',
                   ['has',['to-string', ['get', area_variable_map]],['literal',zoneHistColor]],
@@ -365,16 +365,16 @@ creates a listener for the choices in the dropdown for area as it is reset consi
 
 
 **/
-function createGridDropDownCallback(choosen_scatter, area_set, quantileScaleHist, zoneLegend, svgInfo){
+// function createGridDropDownCallback(maplayer, choosen_scatter, area_set, quantileScaleHist, zoneLegend, svgInfo){
 
-    let gridHist = document.getElementById('gridType');
+//     let gridHist = document.getElementById('gridType');
 
-    gridHist.addEventListener('change', function() {
+//     gridHist.addEventListener('change', function() {
 
-        resetzones(choosen_scatter, this.value, area_set, quantileScaleHist, zoneLegend, svgInfo)
+//         resetzones(maplayer, choosen_scatter, this.value, area_set, quantileScaleHist, zoneLegend, svgInfo)
 
-    });
-}
+//     });
+// }
 
 function createDropDownGridInit(choosen_scatter, numeric_vars){
     let dropdown = document.getElementById('gridType');
@@ -424,7 +424,7 @@ function create_source_draw_grid(gridLayer, gridinfo){
             },
             "paint": {
                 "fill-outline-color": "rgba(100,100,100,1)",
-                // "fill-color": "rgba(1,1,1,0.1)"
+                "fill-color": "rgba(1,1,1,0.1)"
             }
 
 
@@ -551,6 +551,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
         let mapdrop = document.getElementById('grid');
 
         area_variable_map = multi_grid[0]['area_variable_map'];// for inital load use first grid only
+        let maplayer = 'gridLayer0';
 
         mapdrop.addEventListener('change', function(){
 
@@ -571,7 +572,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
 
         gridHist.addEventListener('change', function() {
 
-            resetzones(choosen_scatter, this.value, area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
+            resetzones(maplayer, choosen_scatter, this.value, area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
 
         });
 
@@ -588,7 +589,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
                 ]
             )
             createDropDownGridInit(choosen_scatter, numeric_vars);
-            resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
+            resetzones(maplayer, choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
 
 
         })
