@@ -150,6 +150,11 @@ function loadConfig(error, config, data){
     // resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, map)
      // map.on('styledata', function(e){
     map.on('load', function(e){
+        //turn on grid visibility to inital grid
+        map.setLayoutProperty('gridLayer' + String(0), 'visibility', 'visible');
+        map.setLayoutProperty('gridLayer' + String(0)+'Color', 'visibility', 'visible');
+
+
         scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
 
         map.setPaintProperty('scatterLayer','line-color',['case',
@@ -455,6 +460,7 @@ function makeTheMap(multi_grid, allScatterData){
     map.on('load', function () {
         multi_grid.forEach((e, i) => {
             create_source_draw_grid('gridLayer'+String(i), e)
+
         })
 
         map.addSource('10m-bathymetry-81bsvj', {
