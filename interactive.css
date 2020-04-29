@@ -1,15 +1,23 @@
  body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
+#map { display: flex;
+  width: 80vw;
+    height: 80vh;
+    }
+
+
 
 #allinfo {
-    width: 400px;
-    height: 100vh;
+  display: flex;
+    width: 20vw;
+    height: 80vh;
     background-color: white;
-    /* z-index: 1; */
-    position: absolute;
-    /* float: right; */
     right: 0;
     overflow-y: scroll;
+}
+.container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .map-overlay {
@@ -43,16 +51,15 @@
 #info {
   display: block;
   position: absolute;
-  margin: 0px auto;
-  width: 50%;
+  width: 80vw;
   padding: 10px;
   border: none;
-  border-radius: 3px;
   font-size: 12px;
   text-align: center;
   color: #222;
   background: none;
-  bottom: 0;
+  bottom: 20vh;
+    z-index: 1;
 }
 .scatterLegend, .zoneLegend{{
 background-color: #fff;
@@ -77,8 +84,14 @@ border-radius: 6px;
 fill: #0098d8;
 }
 
-#viz {
-margin-top: 100px;
+#viz  {
+  display: flex;
+  flex-direction: column;
+    width: 80vw;
+    height: 20vh;
+    background-color: white;
+    overflow-y: scroll;
+
 }
 
 #viz .barText {
