@@ -99,7 +99,7 @@ function loadConfig(error, config, data){
     //     })
 
     // })
-    var  zoneObjectAll = {};
+    let  zoneObjectAll = {};
     for(let a=0; a<area_set.length; a++){
         let zoneObjectIndi = {};
                 area_set[a].forEach(function(e){
@@ -149,7 +149,7 @@ function loadConfig(error, config, data){
 
     // map.once('style.load', function(e) {
     let svgInfo = initLowerBarChart();
-    afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid)
+    afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid, zoneObjectAll)
     // })
     // resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, map)
      // map.on('styledata', function(e){
@@ -568,17 +568,15 @@ creates inital map view state after styles load from mapbox
 * @global {object} map
 
 **/
-function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid){
+function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid, zoneObjectAll){
 // after map loads
         let mapdrop = document.getElementById('grid');
 
-        area_variable_map = multi_grid[0]['area_variable_map'];// for inital load use first grid only
-        let maplayer = 'gridLayer0';
-        let mapChoice = 0;
-
-
         mapdrop.addEventListener('change', function(){
             let mapChoice = this.selectedIndex;
+            area_variable_map = multi_grid[mapChoice]['area_variable_map'];// for inital load use first grid only
+            let maplayer = 'gridLayer' + String(mapChoice);
+
             for(let i = 0; i < this.length; i++) {
                 if (i == this.selectedIndex){
                     map.setLayoutProperty('gridLayer' + String(i), 'visibility', 'visible');
@@ -599,14 +597,21 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
 
 
         gridHist.addEventListener('change', function() {
+            let mapChoice = mapdrop.selectedIndex;
+            area_variable_map = multi_grid[mapChoice]['area_variable_map'];// for inital load use first grid only
+            let maplayer = 'gridLayer' + String(mapChoice);
 
-            resetzones(maplayer, choosen_scatter, this.value, area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
+            resetzones(maplayer, choosen_scatter, this.value, area_set[mapChoice], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
 
         });
 
          prop.addEventListener('change', function() {
 
             choosen_scatter = prop.value;
+
+            let mapChoice = mapdrop.selectedIndex;
+            area_variable_map = multi_grid[mapChoice]['area_variable_map'];// for inital load use first grid only
+            let maplayer = 'gridLayer' + String(mapChoice);
 
             let scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
 
@@ -617,7 +622,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
                 ]
             )
             createDropDownGridInit(choosen_scatter, numeric_vars);
-            resetzones(maplayer, choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
+            resetzones(maplayer, choosen_scatter, "# of observations", area_set[mapChoice], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
 
 
         })
