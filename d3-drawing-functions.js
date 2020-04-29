@@ -154,11 +154,13 @@ function loadConfig(error, config, data){
     // resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, map)
      // map.on('styledata', function(e){
     map.on('load', function(e){
-        //turn on grid visibility to inital grid
+        //turn on grid visibility to inital grid and call inital functions
         let maplayer ='gridLayer' + String(0)
         map.setLayoutProperty(maplayer, 'visibility', 'visible');
         map.setLayoutProperty(maplayer+'Color', 'visibility', 'visible');
         zoneObject = zoneObjectAll[0]
+        area_variable_map = multi_grid[0]['area_variable_map'];// for inital load use first grid only
+
 
 
         scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
@@ -195,6 +197,7 @@ function setZoneHist(choosen_scatter, drop_down_hist, area_set, quantileScaleHis
 
 
     let zoneHistColor={};
+    zoneHistInfo = {};// reset
     switch(drop_down_hist){
         case '# of observations':
             area_set.forEach(function(e){
@@ -344,7 +347,7 @@ sets the colors of the zonal histograms and the associated barchart and legend
 function resetzones(maplayer, choosen_scatter, choosen_grid_hist, area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map){
 
 
-        zoneHistColor = setZoneHist(choosen_scatter, choosen_grid_hist, area_set, quantileScaleHist, zoneLegend);
+        zoneHistColor = setZoneHist(choosen_scatter, choosen_grid_hist,  area_set, quantileScaleHist, zoneLegend);
 
         createLowerBarChart(quantileScaleHist,svgInfo);
 
@@ -571,6 +574,7 @@ creates inital map view state after styles load from mapbox
 function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid, zoneObjectAll){
 // after map loads
         let mapdrop = document.getElementById('grid');
+        let gridHist = document.getElementById('gridType');
 
         mapdrop.addEventListener('change', function(){
             let mapChoice = this.selectedIndex;
@@ -587,13 +591,13 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
                 }
             }
             zoneObject = zoneObjectAll[mapChoice];
-            resetzones(maplayer, choosen_scatter, this.value, area_set[mapChoice], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
+            resetzones(maplayer, choosen_scatter, gridHist.value, area_set[mapChoice], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
 
 
 
         })
 
-        let gridHist = document.getElementById('gridType');
+
 
 
         gridHist.addEventListener('change', function() {
