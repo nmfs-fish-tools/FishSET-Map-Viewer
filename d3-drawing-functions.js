@@ -83,18 +83,36 @@ function loadConfig(error, config, data){
     })
     allScatterData =  turf.featureCollection(scatterData);
 
-    const area_info = data.map(function(d) {
-            return Number(d[area_variable_column])
-        });
-
-    const area_set  = new Set(area_info);
-    area_set.forEach(function(e){
-        zoneObject[e] = data.filter(function(d){
-            return Number(d[area_variable_column]) == e
-
-        })
-
+    const area_info = multi_grid.map(function(i) {
+            let a = i['area_variable_column'];
+            return data.map(function(d) {
+                return Number(d[a])
+            });
     })
+
+    const area_set = area_info.map(i=>{return new Set(i)})
+    // const area_set  = new Set(area_info[0]);
+    // area_set[0].forEach(function(e){
+    //     zoneObject[e] = data.filter(function(d){
+    //         return Number(d[area_variable_column]) == e
+
+    //     })
+
+    // })
+    let zoneObjectAll = {};
+    for(let a=0; a<area_set.length; a++){
+        let zoneObjectIndi = {};
+                area_set[a].forEach(function(e){
+                    zoneObjectIndi[e] = data.filter(function(d){
+                        return Number(d[multi_grid[a]['area_variable_column']]) == e
+
+                    })
+
+                })
+                zoneObjectAll[a]= zoneObjectIndi;
+
+    }
+
     let scatterColor = setScatterColor(data, numeric_vars, choosen_scatter, scatterLegend, uniqueID);
     // map.once('style.load', function(e) {
 
@@ -154,6 +172,7 @@ function loadConfig(error, config, data){
         let maplayer ='gridLayer' + String(0)
         map.setLayoutProperty(maplayer, 'visibility', 'visible');
         map.setLayoutProperty(maplayer+'Color', 'visibility', 'visible');
+        zoneObject = zoneObjectAll[0]
 
 
         scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
@@ -165,7 +184,7 @@ function loadConfig(error, config, data){
             ]
         )
     createDropDownGridInit(choosen_scatter, numeric_vars);
-    resetzones(maplayer, choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
+    resetzones(maplayer, choosen_scatter, "# of observations", area_set[0], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
     })
 
 
@@ -546,15 +565,15 @@ creates inital map view state after styles load from mapbox
 * @global {object} map
 
 **/
-function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid){
+function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set_all, zoneLegend, svgInfo, multi_grid){
 // after map loads
         let mapdrop = document.getElementById('grid');
 
         area_variable_map = multi_grid[0]['area_variable_map'];// for inital load use first grid only
         let maplayer = 'gridLayer0';
+        let mapChoice = 0;
 
         mapdrop.addEventListener('change', function(){
-
             for(let i = 0; i < this.length; i++) {
                 if (i == this.selectedIndex){
                     map.setLayoutProperty('gridLayer' + String(i), 'visibility', 'visible');
@@ -564,11 +583,14 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
                     map.setLayoutProperty('gridLayer' + String(i)+'Color', 'visibility', 'none');
                 }
             }
+            zoneObject = zoneObjectAll[i];
+
 
 
         })
 
         let gridHist = document.getElementById('gridType');
+        let area_set = area_set_all[mapChoice];
 
         gridHist.addEventListener('change', function() {
 
