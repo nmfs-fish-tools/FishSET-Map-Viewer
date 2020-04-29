@@ -99,7 +99,7 @@ function loadConfig(error, config, data){
     //     })
 
     // })
-    let zoneObjectAll = {};
+    var  zoneObjectAll = {};
     for(let a=0; a<area_set.length; a++){
         let zoneObjectIndi = {};
                 area_set[a].forEach(function(e){
@@ -142,21 +142,7 @@ function loadConfig(error, config, data){
 
             }
         });
-    map.on("click", "GridLayerColor", function(e) {
-            if (e.features.length > 0) {
-                // if (hoveredStateId) {
-                //    //console.log(zoneHistInfo[hoveredStateId] )
-                // }
 
-                var description = e.features[0].properties;
-
-                new mapboxgl.Popup()
-                    .setLngLat(e.lngLat)
-                    .setHTML(JSON.stringify(description))
-                    .addTo(map);
-
-            }
-        });
 
 
 
@@ -466,6 +452,23 @@ function create_source_draw_grid(gridLayer, gridinfo){
 
         });
 
+
+     map.on("click", gridLayer + 'Color', function(e) {
+            if (e.features.length > 0) {
+                // if (hoveredStateId) {
+                //    //console.log(zoneHistInfo[hoveredStateId] )
+                // }
+
+                var description = e.features[0].properties;
+
+                new mapboxgl.Popup()
+                    .setLngLat(e.lngLat)
+                    .setHTML(JSON.stringify(description))
+                    .addTo(map);
+
+            }
+        });
+
 }
 
 /**
@@ -565,7 +568,7 @@ creates inital map view state after styles load from mapbox
 * @global {object} map
 
 **/
-function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set_all, zoneLegend, svgInfo, multi_grid){
+function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid){
 // after map loads
         let mapdrop = document.getElementById('grid');
 
@@ -573,7 +576,9 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
         let maplayer = 'gridLayer0';
         let mapChoice = 0;
 
+
         mapdrop.addEventListener('change', function(){
+            let mapChoice = this.selectedIndex;
             for(let i = 0; i < this.length; i++) {
                 if (i == this.selectedIndex){
                     map.setLayoutProperty('gridLayer' + String(i), 'visibility', 'visible');
@@ -583,14 +588,15 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
                     map.setLayoutProperty('gridLayer' + String(i)+'Color', 'visibility', 'none');
                 }
             }
-            zoneObject = zoneObjectAll[i];
+            zoneObject = zoneObjectAll[mapChoice];
+            resetzones(maplayer, choosen_scatter, this.value, area_set[mapChoice], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
 
 
 
         })
 
         let gridHist = document.getElementById('gridType');
-        let area_set = area_set_all[mapChoice];
+
 
         gridHist.addEventListener('change', function() {
 
