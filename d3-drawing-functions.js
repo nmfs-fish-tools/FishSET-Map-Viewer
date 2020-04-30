@@ -659,7 +659,7 @@ function createLowerBarChart(colorsScale, svgInfo){
 
     // Adjusting data by assigning domain to the range of the scale
     xScale.domain(xgroup);
-    yScale.domain([0, d3.max(values)]);
+    yScale.domain([d3.min(values), d3.max(values)]);
 
     if(svgInfo){svgInfo.g.selectAll('g').remove()}
 
@@ -674,6 +674,7 @@ function createLowerBarChart(colorsScale, svgInfo){
         .attr("dx", "-.8em")
         .attr("dy", ".15em")
         .attr("transform", "rotate(-65)");
+
 
 
     // Appending Y axis
