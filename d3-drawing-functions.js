@@ -113,7 +113,7 @@ function loadConfig(error, config, data){
 
     }
 
-    let scatterColor = setScatterColor(data, numeric_vars, choosen_scatter, scatterLegend, uniqueID);
+    let [scatterArray, scatterColor] = setScatterColor(data, numeric_vars, choosen_scatter, scatterLegend, uniqueID);
     // map.once('style.load', function(e) {
 
     // makeTheMap(grid_file, allScatterData);
@@ -148,7 +148,8 @@ function loadConfig(error, config, data){
 
 
     // map.once('style.load', function(e) {
-    let svgInfo = initLowerBarChart();
+    let svgInfo = initLowerBarChart('#viz');
+    let svgInfoScatter = initLowerBarChart('#scatterviz');
     afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid, zoneObjectAll)
     // })
     // resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, map)
@@ -163,7 +164,7 @@ function loadConfig(error, config, data){
 
 
 
-        scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
+        [scatterArray, scatterColor] = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
 
         map.setPaintProperty('scatterLayer','line-color',['case',
               ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
@@ -173,6 +174,7 @@ function loadConfig(error, config, data){
         )
     createDropDownGridInit(choosen_scatter, numeric_vars);
     resetzones(maplayer, choosen_scatter, "# of observations", area_set[0], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
+    scatterPlot(svgInfoScatter, scatterArray, scatterColor)
     })
 
 
@@ -278,15 +280,16 @@ function setZoneHist(choosen_scatter, drop_down_hist, area_set, quantileScaleHis
 function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID){
 
 
-    let scatterColor ={};
+    let scatterColor = {};
+    let scatterArray = {};
     if (numeric_vars.includes(choosen_scatter)){
-        let scatter_array = data.map(function(d){
+        scatterArray = data.map(function(d){
             return Number(d[choosen_scatter])
 
         })
          var quantileScaleScatter = d3.scaleQuantile();
         quantileScaleScatter
-        .domain(scatter_array)
+        .domain(scatterArray)
         .range(['#feebe2',
                '#fcc5c0',
                 '#fa9fb5',
@@ -301,16 +304,16 @@ function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLe
         createLegend(quantileScaleScatter, scatterLegend);
     }
     else if (id_vars.includes(choosen_scatter)){
-        let scatter_array = data.map(function(d){
+        scatterArray = data.map(function(d){
             return d[choosen_scatter]
 
         })
         var ordinalScatter = d3.scaleOrdinal();
 
-        let ordinal_types = new Set(scatter_array);
+        let ordinal_types = new Set(scatterArray);
 
         ordinalScatter
-        .domain(scatter_array) // change colors to based on set
+        .domain(scatterArray) // change colors to based on set
         .range(['#feebe2',
                '#fcc5c0',
                 '#fa9fb5',
@@ -327,7 +330,7 @@ function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLe
     }
      var prop = document.getElementById('prop');
 
-    return scatterColor;
+    return [scatterArray, scatterColor]
 }
 
 
@@ -617,7 +620,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
             area_variable_map = multi_grid[mapChoice]['area_variable_map'];// for inital load use first grid only
             let maplayer = 'gridLayer' + String(mapChoice);
 
-            let scatterColor = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
+            let [scatterArray, scatterColor] = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
 
             map.setPaintProperty('scatterLayer','line-color',['case',
                   ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
@@ -740,14 +743,14 @@ function legendInit(whichLegend){
 /**
  *initate the svg for the bar chart that shows the spatial histogram
  */
-function initLowerBarChart(){
+function initLowerBarChart(whichViz){
 
 
     let margin = {top: 10, right: 10, bottom: 30, left: 50},
         width = 700 - margin.left - margin.right,
         height = 150 - margin.top - margin.bottom;
 
-    let svgChart = d3.select('#viz').selectAll('svg')
+    let svgChart = d3.select(whichViz).selectAll('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
 
@@ -761,5 +764,50 @@ function initLowerBarChart(){
 function sum(a,b){
  return a+b;
 }
+
+
+function scatterPlot(whichViz, scatterArray, scatterColor){
+    zipData = zip(scatterArray,scatterColor)
+    let height = 100;
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([0, scatterArray.length])
+    .range([ 0, 700]);
+
+  if(whichViz){whichViz.g.selectAll('g').remove()}
+
+    // Appending X axis and formatting the text
+    whichViz.g.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+  // Add Y axis
+  var y = d3.scaleLinear()
+    .domain([0, d3.max(scatterArray)])
+    .range([ height, 0]);
+
+  whichViz.g.append("g")
+    .call(d3.axisLeft(y));
+
+  // Add dots
+  whichViz.g.append('g')
+    .selectAll("dot")
+    .data(zipData)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d,i) { return x(i); } )
+      .attr("cy", function (d) { return y(d[0]); } )
+      .attr("r", 1.5)
+      .style("fill", function(d){return d[1]})
+
+}
+
+const zip = function(ar1, ar2, zipper) {
+  return zipper
+    ? ar1.map((value, index) => zipper(value, ar2[index]))
+    : ar1.map((value, index) => [value, ar2[index]])
+  ;
+}
+
 
 
