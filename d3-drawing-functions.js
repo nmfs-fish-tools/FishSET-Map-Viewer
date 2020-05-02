@@ -12,6 +12,7 @@ function loadConfig(error, config, data){
     let area_variable_map = config['area_variable_map'];
     let choosen_scatter = config['choosen_scatter'];
 
+
     let numeric_vars = config['numeric_vars'];
     let id_vars =config['id_vars'];
     let time_vars = config['temporal_vars'];
@@ -62,7 +63,11 @@ function loadConfig(error, config, data){
       option = document.createElement('option');
       option.text = layers[i];
       option.value = layers[i]
+
       dropdown.add(option);
+      if (layers[i]==choosen_scatter ){
+          dropdown.selectedIndex = i;//set current scatter option
+      }
     }
 
 
@@ -128,16 +133,21 @@ function loadConfig(error, config, data){
 
 
                     map.setFeatureState({source: 'scatterLayer', id: hoveredStateId}, { hover: false});
+                    d3.selectAll("#id"+String(hoveredStateId)).attr("r", '2')// turn off scatter graph highlight
                     scatter_left_info = data.filter(function(d){
                     return d[uniqueID] == hoveredStateId
                    })
+
                 }
                 hoveredStateId = e.features[0].id;
 
 
                 let allinfo = document.getElementById('allinfo');
-                allinfo.innerText = JSON.stringify(scatter_left_info[0], undefined, 2);
+                if (scatter_left_info){
+                    allinfo.innerText = JSON.stringify(scatter_left_info[0], undefined, 2);
+                }
                 map.setFeatureState({source: 'scatterLayer', id: hoveredStateId}, { hover: true});
+                d3.selectAll("#id"+String(hoveredStateId)).attr("r", '10')// turn off
 
 
             }
@@ -150,7 +160,7 @@ function loadConfig(error, config, data){
     // map.once('style.load', function(e) {
     let svgInfo = initLowerBarChart('#viz');
     let svgInfoScatter = initLowerBarChart('#scatterviz');
-    afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid, zoneObjectAll)
+    afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, svgInfoScatter, multi_grid, zoneObjectAll)
     // })
     // resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, map)
      // map.on('styledata', function(e){
@@ -574,7 +584,7 @@ creates inital map view state after styles load from mapbox
 * @global {object} map
 
 **/
-function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, multi_grid, zoneObjectAll){
+function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, svgInfoScatter, multi_grid, zoneObjectAll){
 // after map loads
         let mapdrop = document.getElementById('grid');
         let gridHist = document.getElementById('gridType');
@@ -595,7 +605,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
             }
             zoneObject = zoneObjectAll[mapChoice];
             resetzones(maplayer, choosen_scatter, gridHist.value, area_set[mapChoice], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
-
+            // scatterPlot(svgInfoScatter, scatterArray, scatterColor)TODO
 
 
         })
@@ -630,7 +640,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
             )
             createDropDownGridInit(choosen_scatter, numeric_vars);
             resetzones(maplayer, choosen_scatter, "# of observations", area_set[mapChoice], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
-
+            scatterPlot(svgInfoScatter, scatterArray, scatterColor)
 
         })
 
@@ -768,11 +778,11 @@ function sum(a,b){
 
 function scatterPlot(whichViz, scatterArray, scatterColor){
     zipData = zip(scatterArray,scatterColor)
-    let height = 100;
+    let height = whichViz.height;
   // Add X axis
   var x = d3.scaleLinear()
     .domain([0, scatterArray.length])
-    .range([ 0, 700]);
+    .range([ 0, whichViz.width]);
 
   if(whichViz){whichViz.g.selectAll('g').remove()}
 
@@ -783,7 +793,7 @@ function scatterPlot(whichViz, scatterArray, scatterColor){
 
   // Add Y axis
   var y = d3.scaleLinear()
-    .domain([0, d3.max(scatterArray)])
+    .domain([d3.min(scatterArray), d3.max(scatterArray)])
     .range([ height, 0]);
 
   whichViz.g.append("g")
@@ -797,8 +807,11 @@ function scatterPlot(whichViz, scatterArray, scatterColor){
     .append("circle")
       .attr("cx", function (d,i) { return x(i); } )
       .attr("cy", function (d) { return y(d[0]); } )
-      .attr("r", 1.5)
+      .attr("id", function(d,i){ return "id" + String(i); })
+      .attr("r", 2)
       .style("fill", function(d){return d[1]})
+
+
 
 }
 
@@ -808,6 +821,10 @@ const zip = function(ar1, ar2, zipper) {
     : ar1.map((value, index) => [value, ar2[index]])
   ;
 }
+
+
+
+
 
 
 
