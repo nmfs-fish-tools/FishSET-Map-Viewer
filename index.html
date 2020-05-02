@@ -46,6 +46,7 @@
                 </div>
                 <div class = 'scatterLegend'></div>
                 <div class ='spacing'>
+                    <input type="checkbox" id="gridLayerCheck"  checked onclick="gridLayerOff()">
                      <label><b>Select Grid Bin Type</b></label>
                     <select id='gridType' name='gridType'>
                     </select>
@@ -59,6 +60,7 @@
             </div>
 
         </div>
+
         <div class ='spacing2'>
 
         <div id='viz'> <svg width="700" height="300"></svg></div>
@@ -85,9 +87,9 @@
 var map;  // gloabl map variable for mapbox
 
 queue()
-    .defer(d3.json, 'map_config.json') //loads a file and waits
-    .defer(d3.csv, 'fake_data_combined1.csv') // lods file and waits
-    // .defer(d3.csv, 'datafile_mhdrop.csv') // lods file and waits
+    .defer(d3.json, 'map_config_mh.json') //loads a file and waits
+    // .defer(d3.csv, 'fake_data_combined1.csv') // lods file and waits
+    .defer(d3.csv, 'datafile_mhdrop.csv') // lods file and waits
     .await(loadConfig); // runs loadCOnfig ince two above files are loaded fully
 
 

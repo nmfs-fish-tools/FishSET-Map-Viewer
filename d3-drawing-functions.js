@@ -81,14 +81,7 @@ function loadConfig(error, config, data){
     let quantileScaleHist = d3.scaleQuantile();
     // var ordinalScatter = d3.scaleOrdinal();
     //First check Longitudes for positive numbes
-    function longConvert(x){
-        if(x>0){
-            return x-360
-        }
-        else{
-        return x
-        }
-    }
+
 
     data.forEach(function(d){
 
@@ -832,6 +825,31 @@ function scatterPlot(whichViz, scatterArrayIDs, scatterColor){
 
 
 
+}
+
+
+function longConvert(x){
+        if(x>0){
+            return x-360
+        }
+        else{
+        return x
+        }
+}
+
+
+function gridLayerOff(){
+    let gridLayerCheck = document.getElementById("gridLayerCheck");
+    let mapdrop = document.getElementById('grid');
+    let layer = 'gridLayer' + String(mapdrop.selectedIndex)+'Color';
+
+  if (gridLayerCheck.checked == true){
+    // find color map grid and turn on
+    map.setLayoutProperty(layer, 'visibility', 'visible');
+  } else {
+     // find color map grid and turn on
+     map.setLayoutProperty(layer, 'visibility', 'none');
+  }
 }
 
 //TODO add scatter graph for non numeric data
