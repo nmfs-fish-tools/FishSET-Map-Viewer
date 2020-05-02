@@ -123,7 +123,7 @@ function loadConfig(error, config, data){
 
     /* associate the colors for the legend to the scatter data and save values, color and ID's
     */
-    let [scatterArray, scatterColor] = setScatterColor(data, numeric_vars, choosen_scatter, scatterLegend, uniqueID);
+    let [scatterArray, scatterColor, temporalArray] = setScatterColor(data, numeric_vars, time_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
 
     /* paint the geojson layers of bathymetry, zones and scatter
     */
@@ -162,7 +162,7 @@ function loadConfig(error, config, data){
 
     /* Set up callbacks for dropdowns
     */
-    afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, svgInfoScatter, multi_grid, zoneObjectAll)
+    afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, time_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, svgInfoScatter, multi_grid, zoneObjectAll)
 
     /* Call starting values for map
     */
@@ -176,7 +176,7 @@ function loadConfig(error, config, data){
 
 
 
-        [scatterArray, scatterColor] = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
+        [scatterArray, scatterColor, temporalArray] = setScatterColor(data, numeric_vars, time_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
 
         map.setPaintProperty('scatterLayer','line-color',['case',
               ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
@@ -186,7 +186,7 @@ function loadConfig(error, config, data){
         )
     createDropDownGridInit(choosen_scatter, numeric_vars);
     resetzones(maplayer, choosen_scatter, "# of observations", area_set[0], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
-    scatterPlot(svgInfoScatter, scatterArray, scatterColor)
+    scatterPlot(svgInfoScatter, scatterArray, scatterColor, temporalArray)
     })
 
 
@@ -291,7 +291,7 @@ function setZoneHist(choosen_scatter, drop_down_hist, area_set, quantileScaleHis
 * @param {string} uniqueID - the variable name pointing to the row id
 * @returns {object}  the object with colors for each line of the scatter plot
 */
-function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID){
+function setScatterColor(data, numeric_vars, time_vars, id_vars, choosen_scatter, scatterLegend, uniqueID){
 
 
     let scatterColor = {};
@@ -300,6 +300,9 @@ function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLe
             return d[uniqueID]
 
         });
+    let temporalArray = data.map(function(d){
+        return d[time_vars[0]]
+    })
 
     if (numeric_vars.includes(choosen_scatter)){
         scatterArray = data.map(function(d){
@@ -351,7 +354,8 @@ function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLe
     }
      var prop = document.getElementById('prop');
     let scatterArrayID=Object.fromEntries(scatterUnique.map((_, i) => [scatterUnique[i], scatterArray[i]]))
-    return [scatterArrayID, scatterColor]
+
+    return [scatterArrayID, scatterColor, temporalArray]
 }
 
 
@@ -590,7 +594,7 @@ creates inital map view state after styles load from mapbox
 * @global {object} map
 
 **/
-function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, svgInfoScatter, multi_grid, zoneObjectAll){
+function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, time_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, svgInfoScatter, multi_grid, zoneObjectAll){
 // after map loads
         let mapdrop = document.getElementById('grid');
         let gridHist = document.getElementById('gridType');
@@ -636,7 +640,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
             area_variable_map = multi_grid[mapChoice]['area_variable_map'];// for inital load use first grid only
             let maplayer = 'gridLayer' + String(mapChoice);
 
-            let [scatterArray, scatterColor] = setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
+            let [scatterArray, scatterColor, temporalArray] = setScatterColor(data, numeric_vars, time_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
 
             map.setPaintProperty('scatterLayer','line-color',['case',
                   ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
@@ -646,7 +650,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_var
             )
             createDropDownGridInit(choosen_scatter, numeric_vars);
             resetzones(maplayer, choosen_scatter, "# of observations", area_set[mapChoice], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
-            scatterPlot(svgInfoScatter, scatterArray, scatterColor)
+            scatterPlot(svgInfoScatter, scatterArray, scatterColor, temporalArray)
 
         })
 
@@ -780,27 +784,35 @@ function initLowerBarChart(whichViz){
 
 
 
-/* Createa a scatter plot of data
+/** Createa a scatter plot of data
 * @param(whichViz) - svg info of the chart initated
 * @param(scatterArrayIds) - includes UniquesIDs as Keys and value for data
 * @param(scatterColor) - includes UniquesIDs as Keys and color for data
 */
-function scatterPlot(whichViz, scatterArrayIDs, scatterColor){
+function scatterPlot(whichViz, scatterArrayIDs, scatterColor, temporalArray){
     let uniqueIDs = Object.keys(scatterArrayIDs);
     let allscat = Object.values(scatterArrayIDs);
     let zipData = uniqueIDs.map((e)=>{
-        return {'color':scatterColor[e],'number':scatterArrayIDs[e],'id':e}
+        return {'color':scatterColor[e],'number':scatterArrayIDs[e],'id':e, 'time':temporalArray[e]}
     })
 
     let height = whichViz.height;
-  // Add X axis
-  var x = d3.scaleLinear()
-    .domain([0, uniqueIDs.length])
-    .range([ 0, whichViz.width]);
+      // Add X axis
+    // var x = d3.scaleLinear()
+    // .domain([0, uniqueIDs.length])
+    // .range([ 0, whichViz.width]);
 
-    // var x = d3.scaleTime()
-    //   .domain(d3.extent(data, function(d) { return d.date; }))
-    //   .range([ 0, whichViz.width ]);
+    var parseTime = d3.timeParse("%y-%b-%d");
+    var format = d3.timeFormat("%Y%m%d");
+
+
+    var y = d3.scaleLinear()
+        .domain([0, 100])
+        .range([height, 0]);
+
+    var x = d3.scaleTime()
+      .domain(d3.extent(temporalArray, function(d) { return parseTime(d); }))
+      .range([ 0, whichViz.width ]);
 
   if(whichViz){whichViz.g.selectAll('g').remove()}
 
@@ -823,7 +835,7 @@ function scatterPlot(whichViz, scatterArrayIDs, scatterColor){
     .data(zipData)
     .enter()
     .append("circle")
-      .attr("cx", function (d) { return x(Number(d.id)); } )
+      .attr("cx", function (d) { return x(parseTime(d.time)); } )
       .attr("cy", function (d) { return y(d.number); } )
       .attr("id", function(d){ return "id" + String(d.id); })
       .attr("r", 2)
@@ -833,7 +845,8 @@ function scatterPlot(whichViz, scatterArrayIDs, scatterColor){
 
 }
 
-/* Convert any Longitudes that are poisitve to MOD -360*/
+/** Convert any Longitudes that are poisitve to MOD -360
+*/
 function longConvert(x){
         if(x>0){
             return x-360
@@ -843,7 +856,7 @@ function longConvert(x){
         }
 }
 
-/* Toggle color layer of zonal histogram
+/** Toggle color layer of zonal histogram
 */
 function gridLayerOff(){
     let gridLayerCheck = document.getElementById("gridLayerCheck");
@@ -859,14 +872,21 @@ function gridLayerOff(){
   }
 }
 
-//TODO add scatter graph for non numeric data
+//P1
 //TODO add time axis to scatter graph
+//add axis labels
+//TODO add scatter graph for non numeric data
+
+//P2
 //TODO fix grid pop up
 //todo connect click grid to lower graph
-//add axis labels
+
+//P3
 //add please wait while loading
+// move points to new place
+// filtering
 
-
+//Done
 //try big data
 //set long data to 360 data
 //toggle grid on/off
