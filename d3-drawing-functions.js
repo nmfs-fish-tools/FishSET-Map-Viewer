@@ -292,11 +292,17 @@ function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLe
 
     let scatterColor = {};
     let scatterArray = {};
+    let scatterUnique = data.map(function(d){
+            return d[uniqueID]
+
+        });
+
     if (numeric_vars.includes(choosen_scatter)){
         scatterArray = data.map(function(d){
             return Number(d[choosen_scatter])
 
         })
+
          var quantileScaleScatter = d3.scaleQuantile();
         quantileScaleScatter
         .domain(scatterArray)
@@ -339,8 +345,8 @@ function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLe
 
     }
      var prop = document.getElementById('prop');
-
-    return [scatterArray, scatterColor]
+    let scatterArrayID=Object.fromEntries(scatterUnique.map((_, i) => [scatterUnique[i], scatterArray[i]]))
+    return [scatterArrayID, scatterColor]
 }
 
 
@@ -776,12 +782,17 @@ function sum(a,b){
 }
 
 
-function scatterPlot(whichViz, scatterArray, scatterColor){
-    zipData = zip(scatterArray,scatterColor)
+function scatterPlot(whichViz, scatterArrayIDs, scatterColor){
+    let uniqueIDs = Object.keys(scatterArrayIDs);
+    let allscat = Object.values(scatterArrayIDs);
+    let zipData = uniqueIDs.map((e)=>{
+        return {'color':scatterColor[e],'number':scatterArrayIDs[e],'id':e}
+    })
+
     let height = whichViz.height;
   // Add X axis
   var x = d3.scaleLinear()
-    .domain([0, scatterArray.length])
+    .domain([0, uniqueIDs.length])
     .range([ 0, whichViz.width]);
 
   if(whichViz){whichViz.g.selectAll('g').remove()}
@@ -793,7 +804,7 @@ function scatterPlot(whichViz, scatterArray, scatterColor){
 
   // Add Y axis
   var y = d3.scaleLinear()
-    .domain([d3.min(scatterArray), d3.max(scatterArray)])
+    .domain([d3.min(allscat), d3.max(allscat)])
     .range([ height, 0]);
 
   whichViz.g.append("g")
@@ -805,22 +816,17 @@ function scatterPlot(whichViz, scatterArray, scatterColor){
     .data(zipData)
     .enter()
     .append("circle")
-      .attr("cx", function (d,i) { return x(i); } )
-      .attr("cy", function (d) { return y(d[0]); } )
-      .attr("id", function(d,i){ return "id" + String(i); })
+      .attr("cx", function (d) { return x(Number(d.id)); } )
+      .attr("cy", function (d) { return y(d.number); } )
+      .attr("id", function(d){ return "id" + String(d.id); })
       .attr("r", 2)
-      .style("fill", function(d){return d[1]})
+      .style("fill", function(d){return d.color})
 
 
 
 }
 
-const zip = function(ar1, ar2, zipper) {
-  return zipper
-    ? ar1.map((value, index) => zipper(value, ar2[index]))
-    : ar1.map((value, index) => [value, ar2[index]])
-  ;
-}
+
 
 
 
