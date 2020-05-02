@@ -8,8 +8,8 @@
  */
 function loadConfig(error, config, data){
 
-    let area_variable_column = config['area_variable_column'];
-    let area_variable_map = config['area_variable_map'];
+    // let area_variable_column = config['area_variable_column'];
+    // let area_variable_map = config['area_variable_map'];
     let choosen_scatter = config['choosen_scatter'];
 
 
@@ -80,11 +80,19 @@ function loadConfig(error, config, data){
 
     let quantileScaleHist = d3.scaleQuantile();
     // var ordinalScatter = d3.scaleOrdinal();
-
+    //First check Longitudes for positive numbes
+    function longConvert(x){
+        if(x>0){
+            return x-360
+        }
+        else{
+        return x
+        }
+    }
 
     data.forEach(function(d){
 
-        scatterData.push(turf.lineString([[Number(d[longitude_start]),Number(d[latitude_start])],[Number(d[longitude_end]),Number(d[latitude_end])]], {UID: Number(d[uniqueID])},{id:Number(d[uniqueID])}));
+        scatterData.push(turf.lineString([[longConvert(Number(d[longitude_start])),Number(d[latitude_start])],[longConvert(Number(d[longitude_end])),Number(d[latitude_end])]], {UID: Number(d[uniqueID])},{id:Number(d[uniqueID])}));
     })
     allScatterData =  turf.featureCollection(scatterData);
 
@@ -825,6 +833,15 @@ function scatterPlot(whichViz, scatterArrayIDs, scatterColor){
 
 
 }
+
+//TODO add scatter graph for non numeric data
+//TODO add time axis to scatter graph
+//TODO fix grid pop up
+//todo connect click grid to lower graph
+//add axis labels
+//try big data
+//set long data to 360 data
+//toggle grid on/off
 
 
 
