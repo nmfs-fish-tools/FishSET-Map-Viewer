@@ -8,11 +8,9 @@
  */
 function loadConfig(error, config, data){
 
-    // let area_variable_column = config['area_variable_column'];
-    // let area_variable_map = config['area_variable_map'];
+    /** Set up config information
+    */
     let choosen_scatter = config['choosen_scatter'];
-
-
     let numeric_vars = config['numeric_vars'];
     let id_vars =config['id_vars'];
     let time_vars = config['temporal_vars'];
@@ -28,6 +26,8 @@ function loadConfig(error, config, data){
     let multi_grid = config['multi_grid'];
     let maps_available = multi_grid.map(a=>{return a['mapfile']});
 
+    /** Initatite Map simply
+    */
     mapboxgl.accessToken = access_token;
     map = new mapboxgl.Map({
         container: 'map',
@@ -37,7 +37,8 @@ function loadConfig(error, config, data){
     });
 
 
-    //create map drop downs:
+    /** Create droppdown menus for choices
+    */
     let mapdrop = document.getElementById('grid');
     mapdrop.length = 0;
     mapdrop.selectedIndex = 0;
@@ -70,25 +71,32 @@ function loadConfig(error, config, data){
       }
     }
 
-
+    /* Initate Legend Variables
+    */
     let scatterLegend = legendInit('.scatterLegend');
     let zoneLegend = legendInit('.zoneLegend');
-
-    let columns = Object.keys(data[0]);
-
-    let scatterData =[];
-
     let quantileScaleHist = d3.scaleQuantile();
-    // var ordinalScatter = d3.scaleOrdinal();
-    //First check Longitudes for positive numbes
 
+    /*Initate Lower Bar Graphs
+    */
+    let svgInfo = initLowerBarChart('#viz');
+    let svgInfoScatter = initLowerBarChart('#scatterviz');
+
+
+
+    /** convert CSV data to geojson for Scatter Data
+    * convert any positive longitudes to negative
+    */
+    let scatterData =[];
 
     data.forEach(function(d){
 
         scatterData.push(turf.lineString([[longConvert(Number(d[longitude_start])),Number(d[latitude_start])],[longConvert(Number(d[longitude_end])),Number(d[latitude_end])]], {UID: Number(d[uniqueID])},{id:Number(d[uniqueID])}));
     })
-    allScatterData =  turf.featureCollection(scatterData);
+    allScatterData =  turf.featureCollection(scatterData); // GEOJSON of CSV Data
 
+    /** create SET of Areas used by data
+    */
     const area_info = multi_grid.map(function(i) {
             let a = i['area_variable_column'];
             return data.map(function(d) {
@@ -97,15 +105,8 @@ function loadConfig(error, config, data){
     })
 
     const area_set = area_info.map(i=>{return new Set(i)})
-    // const area_set  = new Set(area_info[0]);
-    // area_set[0].forEach(function(e){
-    //     zoneObject[e] = data.filter(function(d){
-    //         return Number(d[area_variable_column]) == e
 
-    //     })
-
-    // })
-    let  zoneObjectAll = {};
+    let  zoneObjectAll = {}; //for all grids create dictionary of IDs and values
     for(let a=0; a<area_set.length; a++){
         let zoneObjectIndi = {};
                 area_set[a].forEach(function(e){
@@ -119,12 +120,17 @@ function loadConfig(error, config, data){
 
     }
 
-    let [scatterArray, scatterColor] = setScatterColor(data, numeric_vars, choosen_scatter, scatterLegend, uniqueID);
-    // map.once('style.load', function(e) {
 
-    // makeTheMap(grid_file, allScatterData);
+    /* associate the colors for the legend to the scatter data and save values, color and ID's
+    */
+    let [scatterArray, scatterColor] = setScatterColor(data, numeric_vars, choosen_scatter, scatterLegend, uniqueID);
+
+    /* paint the geojson layers of bathymetry, zones and scatter
+    */
     makeTheMap(multi_grid, allScatterData);
 
+    /* Add mouseover for scatter data to show info in right hand column and highlight data on lower bar graph
+    */
     map.on("mousemove", "scatterLayer", function(e) {
             var scatter_left_info;
 
@@ -154,17 +160,12 @@ function loadConfig(error, config, data){
             }
         });
 
-
-
-
-
-    // map.once('style.load', function(e) {
-    let svgInfo = initLowerBarChart('#viz');
-    let svgInfoScatter = initLowerBarChart('#scatterviz');
+    /* Set up callbacks for dropdowns
+    */
     afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, svgInfoScatter, multi_grid, zoneObjectAll)
-    // })
-    // resetzones(choosen_scatter, "# of observations", area_set, quantileScaleHist, zoneLegend, svgInfo, map)
-     // map.on('styledata', function(e){
+
+    /* Call starting values for map
+    */
     map.on('load', function(e){
         //turn on grid visibility to inital grid and call inital functions
         let maplayer ='gridLayer' + String(0)
@@ -796,6 +797,10 @@ function scatterPlot(whichViz, scatterArrayIDs, scatterColor){
     .domain([0, uniqueIDs.length])
     .range([ 0, whichViz.width]);
 
+    // var x = d3.scaleTime()
+    //   .domain(d3.extent(data, function(d) { return d.date; }))
+    //   .range([ 0, whichViz.width ]);
+
   if(whichViz){whichViz.g.selectAll('g').remove()}
 
     // Appending X axis and formatting the text
@@ -857,6 +862,9 @@ function gridLayerOff(){
 //TODO fix grid pop up
 //todo connect click grid to lower graph
 //add axis labels
+//add please wait while loading
+
+
 //try big data
 //set long data to 360 data
 //toggle grid on/off
