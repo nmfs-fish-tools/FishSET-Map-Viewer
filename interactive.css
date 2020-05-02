@@ -78,8 +78,6 @@
   padding: 5px;
   position: absolute;
   background: rgba(10, 10, 10, .2);
-  display: flex;
-  flex-direction:row;
   }
 #info {
   margin-right: 10px;
