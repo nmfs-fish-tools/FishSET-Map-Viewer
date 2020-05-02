@@ -200,6 +200,8 @@ function loadConfig(error, config, data){
 
 
 /**
+ based onthe choice in the zone dropdwon , calculates the aggregation choosen and associated the color for the zone
+
 * @param {string} choosen_scatter - the variable that is being plotted as scatter
 * @param {string} drop_down_hit - the value in the drop down menu choosen
 * @param {Set} area_set - a Set object that has all the zones which have data
@@ -275,7 +277,7 @@ function setZoneHist(choosen_scatter, drop_down_hist, area_set, quantileScaleHis
         zoneHistColor[d] = quantileScaleHist(zoneHistInfo[d]);
 
     })
-    createLegend(quantileScaleHist,zoneLegend);
+    createLegend(quantileScaleHist, zoneLegend);
 
     return zoneHistColor
 }
@@ -315,6 +317,7 @@ function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLe
                 '#dd3497',
                '#ae017e',
                 '#7a0177']);
+
         data.forEach(function(d) {
             scatterColor[d[uniqueID]] = quantileScaleScatter(Number(d[choosen_scatter]));
         });
@@ -356,6 +359,7 @@ function setScatterColor(data, numeric_vars, id_vars, choosen_scatter, scatterLe
 /**
 sets the colors of the zonal histograms and the associated barchart and legend
 
+* @param {string} maplayer - the name of the Grid map choosen
 * @param {string} choosen_scatter - the variable that is being plotted as scatter
 * @param {string} choosen_grid_hist - the value in the drop down menu choosen
 * @param {Set} area_set - a Set object that has all the zones whih have data
@@ -394,16 +398,7 @@ creates a listener for the choices in the dropdown for area as it is reset consi
 
 
 **/
-// function createGridDropDownCallback(maplayer, choosen_scatter, area_set, quantileScaleHist, zoneLegend, svgInfo){
 
-//     let gridHist = document.getElementById('gridType');
-
-//     gridHist.addEventListener('change', function() {
-
-//         resetzones(maplayer, choosen_scatter, this.value, area_set, quantileScaleHist, zoneLegend, svgInfo)
-
-//     });
-// }
 
 function createDropDownGridInit(choosen_scatter, numeric_vars){
     let dropdown = document.getElementById('gridType');
@@ -589,6 +584,9 @@ creates inital map view state after styles load from mapbox
 * @param {Set} area_set - a Set object that has all the zones whih have data
 * @param {object} zoneLegend - object that points to the legend for zones
 * @param {object} svgInfo - svg that pojnts to the bar chart
+* @param {object} svgInfoScatter - svg that points to the scatter plot
+* @param {object} multi_grid - the dictionary of maps avaialable to plot
+* @param {zoneObjectAll} -  object contianing all the ID's to maps
 * @global {object} map
 
 **/
@@ -759,7 +757,8 @@ function legendInit(whichLegend){
 }
 
 /**
- *initate the svg for the bar chart that shows the spatial histogram
+ *initate the svg for the lower charts
+ *@param {object} whcichViz - the svg info that points to the necessary graph
  */
 function initLowerBarChart(whichViz){
 
@@ -779,11 +778,13 @@ function initLowerBarChart(whichViz){
     return {'g':g,'width':width,'height':height}
 }
 
-function sum(a,b){
- return a+b;
-}
 
 
+/* Createa a scatter plot of data
+* @param(whichViz) - svg info of the chart initated
+* @param(scatterArrayIds) - includes UniquesIDs as Keys and value for data
+* @param(scatterColor) - includes UniquesIDs as Keys and color for data
+*/
 function scatterPlot(whichViz, scatterArrayIDs, scatterColor){
     let uniqueIDs = Object.keys(scatterArrayIDs);
     let allscat = Object.values(scatterArrayIDs);
@@ -832,17 +833,18 @@ function scatterPlot(whichViz, scatterArrayIDs, scatterColor){
 
 }
 
-
+/* Convert any Longitudes that are poisitve to MOD -360*/
 function longConvert(x){
         if(x>0){
             return x-360
         }
         else{
-        return x
+            return x
         }
 }
 
-
+/* Toggle color layer of zonal histogram
+*/
 function gridLayerOff(){
     let gridLayerCheck = document.getElementById("gridLayerCheck");
     let mapdrop = document.getElementById('grid');
