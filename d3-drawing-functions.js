@@ -140,7 +140,7 @@ function loadConfig(error, config, data){
 
 
                     map.setFeatureState({source: 'scatterLayer', id: hoveredStateId}, { hover: false});
-                   // d3.selectAll ("#id"+String(hoveredStateId)).attr("r", '2')// turn off scatter graph highlight
+                   d3.selectAll ("#id"+String(hoveredStateId)).attr("r", '2')// turn off scatter graph highlight
                     scatter_left_info = data.filter(function(d){
                     return d[uniqueID] == hoveredStateId
                    })
@@ -154,7 +154,7 @@ function loadConfig(error, config, data){
                     allinfo.innerText = JSON.stringify(scatter_left_info[0], undefined, 2);
                 }
                 map.setFeatureState({source: 'scatterLayer', id: hoveredStateId}, { hover: true});
-                // d3.selectAll("#id"+String(hoveredStateId)).attr("r", '10')// turn off
+                d3.selectAll("#id"+String(hoveredStateId)).attr("r", '10')// turn off
 
 
             }
@@ -186,7 +186,7 @@ function loadConfig(error, config, data){
         )
     createDropDownGridInit(choosen_scatter, numeric_vars);
     resetzones(maplayer, choosen_scatter, "# of observations", area_set[0], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
-    // scatterPlot(svgInfoScatter, scatterArray, scatterColor, temporalArray, num_or_id)//TURN on for scatter
+    scatterPlot(svgInfoScatter, scatterArray, scatterColor, temporalArray, num_or_id)//TURN on for scatter
     })
 
 
@@ -673,7 +673,7 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, time_v
             )
             createDropDownGridInit(choosen_scatter, numeric_vars);
             resetzones(maplayer, choosen_scatter, "# of observations", area_set[mapChoice], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
-            // scatterPlot(svgInfoScatter, scatterArray, scatterColor, temporalArray, num_or_id)//turn on for scatter
+            scatterPlot(svgInfoScatter, scatterArray, scatterColor, temporalArray, num_or_id)//turn on for scatter
 
         })
 
@@ -839,8 +839,8 @@ function scatterPlot(whichViz, scatterArrayIDs, scatterColor, temporalArray, num
     }
 
 
-    // var parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
-    var parseTime = d3.timeParse("%y-%b-%d");
+    var parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
+   // var parseTime = d3.timeParse("%y-%b-%d");
     var format = d3.timeFormat("%Y%m%d");
 
 
