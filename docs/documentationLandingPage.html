@@ -147,7 +147,18 @@
              Rscript -e 'servr::httd()' -b
         </code>
         </pre>
+         <li> for RStudio
+        </li>
+        <pre>
+            to ensure that a browser is opened outside of RStudio:
+        <code>
+             browseURL(servr::httd(browser = FALSE)$url)
+        </code>
+        </pre>
          </li>
+
+
+
     </UL>
 
 
