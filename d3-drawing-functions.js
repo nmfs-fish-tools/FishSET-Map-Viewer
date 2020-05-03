@@ -789,9 +789,9 @@ function legendInit(whichLegend){
  */
 function initLowerBarChart(whichViz){
 
-
-    let margin = {top: 10, right: 10, bottom: 30, left: 50},
-        width = 700 - margin.left - margin.right,
+    let chartHolder = document.getElementById(whichViz.substring(1));
+    let margin = {top: 10, right: 50, bottom: 30, left: 50},
+        width = chartHolder.clientWidth - margin.left - margin.right,
         height = 150 - margin.top - margin.bottom;
 
     let svgChart = d3.select(whichViz).selectAll('svg')
