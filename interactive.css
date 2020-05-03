@@ -79,6 +79,7 @@
   position: absolute;
   background: rgba(10, 10, 10, .2);
   }
+
 #info {
   margin-right: 10px;
   text-align: right;
@@ -94,42 +95,44 @@
   z-index: 1;
 
 }
-.scatterLegend, .zoneLegend{{
-background-color: #fff;
+.scatterLegend, .zoneLegend{
+background-color: transparent;
 border-radius: 3px;
 margin: 10px;
 box-shadow: 0 1px 2px rgba(0,0,0,0.10);
-font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+font: 13px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 padding: 10px;
 right: 10px;
 z-index: 1;
+height: 150px;
+overflow: auto !important;
 }
-svg {
-height: 200px;
-width: 200px;
-font-size: 13px;
-background-color:rgba(10, 10, 10, .2);
 
+svg {
+font-size: 13px;
+
+
+}
+
+.legendQuant{
+  width:200px;
 }
 
 .bar {
-border: 1px solid #0b3536;
+
 border-radius: 6px;
-fill: #0098d8;
+
 }
 
 
 
 #viz  {
 
-    position: absolute;
-    margin-top: 20vh;
     border: none;
     width: 100%;
     height: 100%;
     width:100%;
     height: 100%;
-    background-color: #7897ad;
     padding: 10px;
     border: none;
     z-index: 1;
@@ -149,9 +152,9 @@ fill: #0b3536;
 
 
 
-.column {
-float: left;
-overflow: scroll;
+/*.column {
+  float: left;
+
 
 }
 
@@ -160,7 +163,7 @@ overflow: scroll;
 color: #111;
 margin: 24px 0 -12px 20px;
 }
-
+*/
 
 
 /*for toggle layers*/

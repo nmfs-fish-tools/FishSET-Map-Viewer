@@ -54,6 +54,7 @@
 
                 </div>
                 <div class = 'zoneLegend'>
+
                 </div>
 
 
@@ -64,7 +65,7 @@
         <div class ='spacing2'>
 
         <div id='viz'> <svg width="700" height="300"></svg></div>
-        <div id='scatterviz'> <svg width="700" height="300"></svg></div>
+        <!-- <div id='scatterviz'> <svg width="700" height="300"></svg></div> TODO TURN ON FOR SCATTER-->
          </div>
 
     <!-- </div> -->
@@ -87,9 +88,9 @@
 var map;  // gloabl map variable for mapbox
 
 queue()
-    .defer(d3.json, 'map_config_mh.json') //loads a file and waits
-    // .defer(d3.csv, 'fake_data_combined1.csv') // lods file and waits
-    .defer(d3.csv, 'datafile_mhdrop.csv') // lods file and waits
+    .defer(d3.json, 'map_config.json') //loads a file and waits
+    .defer(d3.csv, 'fake_data_combined1.csv') // lods file and waits
+   // .defer(d3.csv, 'datafile_mhdrop.csv') // lods file and waits
     .await(loadConfig); // runs loadCOnfig ince two above files are loaded fully
 
 
