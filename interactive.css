@@ -150,7 +150,9 @@ fill: #0b3536;
 }
 
 
-
+.mapboxgl-popup-content{
+  overflow: auto;
+}
 
 /*.column {
   float: left;
