@@ -19,6 +19,8 @@ function loadConfig(error, config, data){
     let latitude_start = config['latitude_start'];
     let longitude_end = config['longitude_end'];
     let latitude_end = config['latitude_end'];
+    let longitude_pt = config['longitude_pt'];
+    let latitude_pt = config['latitude_pt'];
     let grid_file = config['grid_file'];
     let uniqueID = config['uniqueID']
     let access_token = config['mapbox_token'];
@@ -26,6 +28,23 @@ function loadConfig(error, config, data){
     let multi_grid = config['multi_grid'];
     let maps_available = multi_grid.map(a=>{return a['mapfile']});
 
+    /** Create switch for points and lines to be drawn
+
+    */
+    let drawLines = false;
+    let drawPt = false;
+
+    if (typeof longitude_start !== 'undefined'
+        & typeof latitude_start !== 'undefined'
+        & typeof longitude_end !== 'undefined'
+        & typeof latitude_end !== 'undefined'  ){
+        drawLines = true;
+    }
+
+    if (typeof longitude_pt !== 'undefined'&
+         typeof latitude_pt !== 'undefined'){
+     drawPt = true;
+     }
     /** Initatite Map simply
     */
     mapboxgl.accessToken = access_token;
@@ -87,13 +106,22 @@ function loadConfig(error, config, data){
     /** convert CSV data to geojson for Scatter Data
     * convert any positive longitudes to negative
     */
-    let scatterData =[];
+    let scatterLine =[];
+    let scatterPt =[];
 
     data.forEach(function(d){
 
-        scatterData.push(turf.lineString([[longConvert(Number(d[longitude_start])),Number(d[latitude_start])],[longConvert(Number(d[longitude_end])),Number(d[latitude_end])]], {UID: Number(d[uniqueID])},{id:Number(d[uniqueID])}));
+        if (drawLines){
+            scatterLine.push(turf.lineString([[longConvert(Number(d[longitude_start])),Number(d[latitude_start])],[longConvert(Number(d[longitude_end])),Number(d[latitude_end])]], {UID: Number(d[uniqueID])},{id:Number(d[uniqueID])}));
+            allScatterData =  turf.featureCollection(scatterLine);
+        }
+        if (drawPt){
+            scatterPt.push(turf.point([longConvert(Number(d[longitude_pt])),Number(d[latitude_pt])], {UID: Number(d[uniqueID])},{id:Number(d[uniqueID])}));
+            allScatterData =  turf.featureCollection(scatterPt);
+        }
     })
-    allScatterData =  turf.featureCollection(scatterData); // GEOJSON of CSV Data
+    // allScatterData =  turf.featureCollection(scatterLine); // GEOJSON of CSV Data
+
 
     /** create SET of Areas used by data
     */
@@ -559,28 +587,51 @@ function makeTheMap(multi_grid, allScatterData){
             }
         }, 'barrier_line-land-polygon');
 
+            if(drawLines){
+                map.addLayer({
+                    'id': 'scatterLayer',
+                    'type': 'line',
+                    'source': {
+                       'type': 'geojson',
+                    'data':allScatterData
+                    },
+                    "layout": {
+                        "line-cap": "square"
+                    },
+                    'paint': {
+                        'line-color':'white',
+                        "line-width": ["case",
+                        ["boolean", ["feature-state", "hover"], false],
+                        5,
+                        0.5
+                        ]
+                    },
+                     'tolerance':1.0,
+                     'buffer':0
+                });
+            }
 
-            map.addLayer({
-                'id': 'scatterLayer',
-                'type': 'line',
-                'source': {
-                   'type': 'geojson',
-                'data':allScatterData
-                },
-                "layout": {
-                    "line-cap": "square"
-                },
-                'paint': {
-                    'line-color':'white',
-                    "line-width": ["case",
-                    ["boolean", ["feature-state", "hover"], false],
-                    5,
-                    0.5
-                    ]
-                },
-                 'tolerance':1.0,
-                 'buffer':0
-            });
+            if(drawPt){
+                map.addLayer({
+                    'id': 'scatterLayer',
+                    'type': 'circle',
+                    'source': {
+                       'type': 'geojson',
+                    'data':allScatterData
+                    },
+                    'paint': {
+                        'circle-color':'white',
+                        "circle-radius": ["case",
+                        ["boolean", ["feature-state", "hover"], false],
+                        5,
+                        0.5
+                        ]
+                    },
+                     'tolerance':1.0,
+                     'buffer':0
+                });
+            }
+
             //show location of cursur in lower map corner
             map.on('mousemove', function (e) {
             document.getElementById('info').innerHTML =
