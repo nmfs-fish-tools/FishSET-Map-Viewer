@@ -596,7 +596,7 @@ function makeTheMap(multi_grid, allScatterData){
             }
         }, 'barrier_line-land-polygon');
 
-            if(allScatterData.features[0].geometry.type == 'lineString'){
+            if(allScatterData.features[0].geometry.type == 'LineString'){
                 map.addLayer({
                     'id': 'scatterLayer',
                     'type': 'line',
