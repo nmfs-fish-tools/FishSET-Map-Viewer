@@ -674,7 +674,7 @@ creates inital map view state after styles load from mapbox
 * @param {object} svgInfoScatter - svg that points to the scatter plot
 * @param {object} multi_grid - the dictionary of maps avaialable to plot
 * @param {zoneObjectAll} -  object contianing all the ID's to maps
-* @param {bool}ean drawLines- flag for using linear features
+* @param {boolean} drawLines- flag for using linear features
 * @param {boolean} drawPy- flag for using point features
 * @global {object} map
 
