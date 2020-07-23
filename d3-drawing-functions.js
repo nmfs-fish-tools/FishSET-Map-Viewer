@@ -205,13 +205,22 @@ function loadConfig(error, config, data){
 
 
         [scatterArray, scatterColor, temporalArray, num_or_id] = setScatterColor(data, numeric_vars, time_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
-
-        map.setPaintProperty('scatterLayer','line-color',['case',
-              ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
-              [ 'get',['to-string', ['get', 'UID']],['literal', scatterColor]],
-              "rgba(1,1,1,0)"
-            ]
-        )
+        if(drawLines){
+            map.setPaintProperty('scatterLayer','line-color',['case',
+                  ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
+                  [ 'get',['to-string', ['get', 'UID']],['literal', scatterColor]],
+                  "rgba(1,1,1,0)"
+                ]
+            )
+         }
+         if(drawPt){
+            map.setPaintProperty('scatterLayer','circle-color',['case',
+                  ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
+                  [ 'get',['to-string', ['get', 'UID']],['literal', scatterColor]],
+                  "rgba(1,1,1,0)"
+                ]
+            )
+         }
     createDropDownGridInit(choosen_scatter, numeric_vars);
     resetzones(maplayer, choosen_scatter, "# of observations", area_set[0], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
     scatterPlot(svgInfoScatter, scatterArray, scatterColor, temporalArray, num_or_id)//TURN on for scatter
@@ -587,7 +596,7 @@ function makeTheMap(multi_grid, allScatterData){
             }
         }, 'barrier_line-land-polygon');
 
-            if(drawLines){
+            if(allScatterData.features[0].geometry.type == 'lineString'){
                 map.addLayer({
                     'id': 'scatterLayer',
                     'type': 'line',
@@ -611,7 +620,7 @@ function makeTheMap(multi_grid, allScatterData){
                 });
             }
 
-            if(drawPt){
+            if(allScatterData.features[0].geometry.type == 'Point'){
                 map.addLayer({
                     'id': 'scatterLayer',
                     'type': 'circle',
@@ -624,7 +633,7 @@ function makeTheMap(multi_grid, allScatterData){
                         "circle-radius": ["case",
                         ["boolean", ["feature-state", "hover"], false],
                         5,
-                        0.5
+                        1.0
                         ]
                     },
                      'tolerance':1.0,
