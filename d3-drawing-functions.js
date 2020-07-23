@@ -190,7 +190,7 @@ function loadConfig(error, config, data){
 
     /* Set up callbacks for dropdowns
     */
-    afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, time_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, svgInfoScatter, multi_grid, zoneObjectAll)
+    afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, time_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, svgInfoScatter, multi_grid, zoneObjectAll, drawLines, drawPt)
 
     /* Call starting values for map
     */
@@ -677,7 +677,7 @@ creates inital map view state after styles load from mapbox
 * @global {object} map
 
 **/
-function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, time_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, svgInfoScatter, multi_grid, zoneObjectAll){
+function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, time_vars, id_vars, quantileScaleHist, scatterLegend, area_set, zoneLegend, svgInfo, svgInfoScatter, multi_grid, zoneObjectAll, drawLines, drawPt){
 // after map loads
         let mapdrop = document.getElementById('grid');
         let gridHist = document.getElementById('gridType');
@@ -725,12 +725,23 @@ function afterMapLoadsInit(data, choosen_scatter, uniqueID, numeric_vars, time_v
 
             let [scatterArray, scatterColor, temporalArray, num_or_id] = setScatterColor(data, numeric_vars, time_vars, id_vars, choosen_scatter, scatterLegend, uniqueID);
 
-            map.setPaintProperty('scatterLayer','line-color',['case',
-                  ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
-                  [ 'get',['to-string', ['get', 'UID']],['literal', scatterColor]],
-                  "rgba(1,1,1,0)"
-                ]
-            )
+
+            if(drawLines){
+                map.setPaintProperty('scatterLayer','line-color',['case',
+                      ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
+                      [ 'get',['to-string', ['get', 'UID']],['literal', scatterColor]],
+                      "rgba(1,1,1,0)"
+                    ]
+                )
+             }
+             if(drawPt){
+                map.setPaintProperty('scatterLayer','circle-color',['case',
+                      ['has',['to-string', ['get', 'UID']],['literal',scatterColor]],
+                      [ 'get',['to-string', ['get', 'UID']],['literal', scatterColor]],
+                      "rgba(1,1,1,0)"
+                    ]
+                )
+             }
             createDropDownGridInit(choosen_scatter, numeric_vars);
             resetzones(maplayer, choosen_scatter, "# of observations", area_set[mapChoice], quantileScaleHist, zoneLegend, svgInfo, area_variable_map)
             scatterPlot(svgInfoScatter, scatterArray, scatterColor, temporalArray, num_or_id)//turn on for scatter
