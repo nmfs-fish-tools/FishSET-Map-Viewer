@@ -632,8 +632,8 @@ function makeTheMap(multi_grid, allScatterData){
                         'circle-color':'white',
                         "circle-radius": ["case",
                         ["boolean", ["feature-state", "hover"], false],
-                        5,
-                        1.0
+                        7,
+                        2.0
                         ]
                     },
                      'tolerance':1.0,
